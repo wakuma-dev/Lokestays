@@ -1,0 +1,4 @@
+export { default as Footer } from "./Footer"
+export { default as FooterBottom } from "./FooterBottom"
+export { default as FooterAbout } from "./FooterAbout"
+export { default as FooterLegal } from "./FooterLegal"
