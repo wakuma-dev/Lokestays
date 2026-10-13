@@ -1,1 +1,0 @@
-import{i as e,t}from"./index-D3s4yomx.js";import{n,t as r}from"./footer-CJAo2c10.js";var i=e();function a(){return(0,i.jsxs)(i.Fragment,{children:[(0,i.jsx)(n,{}),(0,i.jsx)(t,{}),(0,i.jsx)(r,{})]})}var o=a;export{o as component};

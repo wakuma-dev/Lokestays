@@ -1,0 +1,1 @@
+import{i as e,n as t}from"./index-D3xST6hE.js";var n=e(),r=t(`/_auth/login`)({component:i});function i(){return(0,n.jsx)(`div`,{children:`Hello "/_auth/login"!`})}export{r as Route};

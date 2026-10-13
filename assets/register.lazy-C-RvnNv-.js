@@ -1,1 +1,0 @@
-import{i as e,n as t}from"./index-D3s4yomx.js";var n=e(),r=t(`/_auth/register`)({component:i});function i(){return(0,n.jsx)(`div`,{children:`Hello "/_auth/register"!`})}export{r as Route};
