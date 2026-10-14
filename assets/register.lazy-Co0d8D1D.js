@@ -1,0 +1,1 @@
+import{a as e,s as t}from"./index-DgXQ0ivd.js";var n=t(),r=e(`/_auth/register`)({component:i});function i(){return(0,n.jsx)(`div`,{children:`Hello "/_auth/register"!`})}export{r as Route};
