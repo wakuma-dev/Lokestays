@@ -1,7 +1,7 @@
 import { useState, memo, useMemo, useEffect} from "react"
 import { Helmet } from "react-helmet-async"
 import { Link } from "@tanstack/react-router"
-
+import ScrollToTopButton from "@/components/common/ScrollToTopButton"
 interface CookieSection {
     id: string;
     title: string;
@@ -78,7 +78,14 @@ const Breadcrumb = memo(() => (
         <ul className="flex items-center gap-2">
             <li>
             <Link to="/"
-                  className="font-normal text-[12px] text-[#222222] leading-[16px] capitalize">
+                  className="font-normal 
+                  text-[12px] transition-all duration-150 
+                  underline-offset-4 hover:underline 
+                  focus-visible:outline-offset-2 
+                  focus-visible:rounded-md
+                  focus-visible:offset-[#222222]
+                  motion-reduce:transition-none
+                 text-[#222222] leading-[16px] capitalize">
                     Home
                   </Link>
              </li>
@@ -86,7 +93,15 @@ const Breadcrumb = memo(() => (
               /
              </li>
              <li aria-current="page" 
-                 className="font-normal text-[12px] text-[#222222] leading-[16px] capitalize">
+                 className="font-normal text-[12px]
+                 hover:underline
+                 underline-offset-4
+                 cursor-pointer
+                 focus-visible:outline-offset-2
+                 focus-visible:offset-[#222222]
+                 focus-visible:rounded-md
+                 motion-reduce:transition-none
+                 text-[#222222] leading-[16px] capitalize">
                     Cookie Policy
                  </li>
         </ul>
@@ -101,8 +116,8 @@ const TableOfContents = memo(({sections, activeId}: TableOfContentsProps) => (
 <aside 
  role="complementary"
  aria-label="Cookie table of contents"
- className="border border-gray-200 rounded-xl h-fit p-5 lg:sticky lg:top-24">
-    <h2 className="text-[#6c6c6c] font-semibold tracking-wide text-sm uppercase mb-3">
+ className="hidden lg:block border border-gray-200 rounded-xl h-fit p-5 lg:sticky lg:top-24">
+    <h2 className="text-[#6c6c6c] font-semibold tracking-wide text-[16px] leading-[24px] uppercase mb-3">
         on this page
     </h2>
     <nav aria-label="Cookie policy section">
@@ -113,7 +128,7 @@ const TableOfContents = memo(({sections, activeId}: TableOfContentsProps) => (
                     <li key={section.id}>
                         <a href={`#${section.id}`}
                            aria-current={isActive ? "location" : undefined}
-                             className={`block text-sm leading-6 transition-color hover:text-[#222222]
+                             className={`block text-[14px] leading-[19px] transition-color hover:text-[#222222]
                       ${isActive} ? "font-semibold text-[#222222]" : "text-gray-500"}`}
                            >
                            {section.title}
@@ -137,10 +152,10 @@ const CookieSectionBlock = memo(({section}: {section: CookieSection}) => (
               className="mb-4 font-bold tracking-tight text-xl sm:text-2xl">
             {section.title}
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3">
             {section.content.map((paragraph, index) => (
                 <p key={`${section.id}-${index}`}
-                   className="text-sm leading-7 text-gray-600 sm:text-base">
+                   className="text-[14px] md:text-[15px] leading-[19px] md:leading-[20px] text-gray-600 sm:text-base">
                     {paragraph}
                 </p>
             ))}
@@ -195,7 +210,7 @@ export default function Cookie(){
     return(
         <main className="w-full px-4 pt-12 md:pt-20 h-auto min-h-screen bg-white text-[#222222]">
             <Helmet>
-                <title>Terms of Service - Lokestays Help Center</title>
+                <title>Cookies - Lokestays Help Center</title>
                 <meta 
                 name="description"
                 />
@@ -206,21 +221,23 @@ export default function Cookie(){
            <div className="w-full max-w-5xl mx-auto">
             <Breadcrumb />
             <header className="my-4 flex flex-col items-start gap-1.5">
-                  <p className="text-[#6c6c6c] text-[14px] leading-[18px] font-normal">Legal Terms</p>
-                    <h1 className="text-[27px] leading-[32px] md:text-[32px]
-                     md:leading-[36px] font-semibold text-[#222222]">
+                  <p className="text-[#6c6c6c] text-[15px] leading-[20px]
+                   font-medium">Legal terms</p>
+                    <h1 className="text-[24px] leading-[29px] md:text-[32px]
+                     md:leading-[36px] font-semibold text-[#222222] tracking-normal md:tracking-tight">
                         Learn how Lokestays uses cookies and similar technologies on our website.</h1>
-                     <p className="mt-1 text-sm text-[#6c6c6c]">
+                     <p className="mt-1 font-normal tracking-normal text-[12px] leading-[16px] text-[#6c6c6c]">
             Last updated:{" "}
             <time dateTime={LAST_UPDATED_ISO}>{LAST_UPDATED}</time>
           </p>
             </header>
-              <div className="grid gird-cols-1 lg:grid-cols-[240px_1fr] py-8 gap-10">
+              <div className="grid gird-cols-1 lg:grid-cols-[240px_1fr] py-4 gap-10">
                     <TableOfContents sections={COOKIE_SECTIONS} activeId={activeId} />
                     <article className="min-w-0">
                         <div className="mb-10 rounded-xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
-                            <h2 className="mb-2 text-lg font-semibold">Please read these terms</h2>
-                            <p className="text-sm leading-7 text-gray-600 sm:text-base">These Terms apply to the use of Lokestays by visitors, registered users, and property hosts. Additional conditions may apply to specific features when clearly communicated to users.</p>
+                            <h2 className="mb-2 text-[15px] leading-[20px] font-semibold">
+                                Please read these terms</h2>
+                            <p className="text-[15px] leading-[20px] text-gray-600 tracking-normal md:tracking-tight">These Terms apply to the use of Lokestays by visitors, registered users, and property hosts. Additional conditions may apply to specific features when clearly communicated to users.</p>
                         </div>
                           <div className="space-y-10">
                             {COOKIE_SECTIONS.map((section) => (
@@ -230,6 +247,7 @@ export default function Cookie(){
                     </article>
                 </div>
            </div>
+           <ScrollToTopButton />
         </main>
     )
 }

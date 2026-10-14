@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, memo } from "react";
 import { Helmet } from "react-helmet-async"
 import { Link } from "@tanstack/react-router";
-
+import ScrollToTopButton from "@/components/common/ScrollToTopButton";
 interface TermsSection {
     id: string;
     title: string;
@@ -124,12 +124,23 @@ const BreadCrumb = memo(() => (
  <ul className="flex items-center gap-2">
     <li>
         <Link to="/"
-             className="font-normal text-[12px] capitalize text-[#2222222] leading-[16px]">
+             className="font-normal text-[12px]
+              capitalize text-[#222222] leading-[16px]
+              underline-offset-4
+              hover:underline
+              focus-visible:offset-[#222222]
+              focus-visible-rounded-md
+              focus-visible:outline-offset-2
+              cursor-pointer
+              motion-reduce:transition-none">
                 Home
              </Link>
     </li>
     <li aria-hidden="true" className="text-[#222222]">/</li>
-    <li aria-current="page" className="text-[#222222] font-normal text-[12px] leading-[16px] ">
+    <li aria-current="page" 
+        className="text-[#222222] underline-offset-4 
+        hover:underline focus-visible:offset-[#222222] focus-visible-rounded-md 
+        motion-reduce:transition-none focus-visible:outline-offset-2  cursor-pointer font-normal text-[12px] leading-[16px] ">
         Terms of Service
     </li>
  </ul>
@@ -144,8 +155,8 @@ const TableOfContents = memo(({sections, activeId}: TableOfContentsProps) => (
  <aside 
    role="complementary"
    arial-label="Terms of service table of contents"
-   className="h-fit rounded-xl border border-gray-200 p-5 lg:sticky lg:top-24">
-    <h2 className="mb-3 text-sm uppercase font-semibold tracking-wide
+   className="hidden lg:block h-fit rounded-xl border border-gray-200 p-5 lg:sticky lg:top-24">
+    <h2 className="mb-3 text-[16px] leading-[24px] uppercase font-semibold tracking-wide
      text-[#6c6c6c]">On this page</h2>
    <nav aria-label="Terms policy sections">
     <ol className="space-y-2.5">
@@ -155,7 +166,7 @@ const TableOfContents = memo(({sections, activeId}: TableOfContentsProps) => (
             <li key={section.id}>
                 <a href={`#${section.id}`}
                    aria-current={isActive ? "location" : undefined}
-                   className={`block text-sm leading-6 transition-colors
+                   className={`block text-[14px] leading-[19px] transition-colors
                      hover:text-[#222222]
                       ${isActive} ? "font-semibold text-[#222222]" : "text-gray-500"}`}>
                         {section.title}
@@ -179,10 +190,10 @@ const TermsSectionBlock = memo(({section}: {section: TermsSection}) => (
           className="mb-4 font-bold tracking-tight sm:text-2xl text-xl">
             {section.title}
           </h2>
-        <div className="space-y-4">
+        <div className="space-y-3">
             {section.content.map((paragraph, index) => (
                 <p key={`${section.id}-${index}`}
-                   className="text-sm leading-7 text-gray-600 sm:text-base">
+                   className="text-[14px] md:text-[15px] leading-[19px] md:leading-[20px] leading-7 text-gray-600 sm:text-base">
                     {paragraph}
                 </p>
             ))}
@@ -247,19 +258,20 @@ export default function Terms(){
             <div className="w-full max-w-5xl mx-auto">
                 <BreadCrumb />
                 <header className="my-4 flex flex-col items-start gap-1.5">
-                    <p className="text-[#6c6c6c] text-[14px] leading-[18px] font-normal">Legal Terms</p>
-                    <h1 className="text-[27px] leading-[32px] md:text-[32px] md:leading-[36px] font-semibold text-[#222222]">These terms explain the rules, responsibilities, and conditions that apply when you use Lokestays.</h1>
+                    <p className="text-[#6c6c6c] text-[15px] leading-[20px] font-medium">
+                        Legal terms</p>
+                    <h1 className="text-[24px] leading-[29px] md:text-[32px] md:leading-[36px] font-semibold text-[#222222]">These terms explain the rules, responsibilities, and conditions that apply when you use Lokestays.</h1>
                      <p className="mt-1 text-sm text-[#6c6c6c]">
             Last updated:{" "}
             <time dateTime={LAST_UPDATED_ISO}>{LAST_UPDATED}</time>
           </p>
                 </header>
-                <div className="grid gird-cols-1 lg:grid-cols-[240px_1fr] py-8 gap-10">
+                <div className="grid gird-cols-1 lg:grid-cols-[240px_1fr] py-4 gap-10">
                     <TableOfContents sections={TERMS_SECTIONS} activeId={activeId} />
                     <article className="min-w-0">
                         <div className="mb-10 rounded-xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
-                            <h2 className="mb-2 text-lg font-semibold">Please read these terms</h2>
-                            <p className="text-sm leading-7 text-gray-600 sm:text-base">These Terms apply to the use of Lokestays by visitors, registered users, and property hosts. Additional conditions may apply to specific features when clearly communicated to users.</p>
+                            <h2 className="mb-2 text-[15px] leading-[20px] font-semibold">Please read these terms</h2>
+                            <p className="text-[15px] leading-[20px] text-gray-600 tracking-normal md:tracking-tight">These Terms apply to the use of Lokestays by visitors, registered users, and property hosts. Additional conditions may apply to specific features when clearly communicated to users.</p>
                         </div>
                           <div className="space-y-10">
                             {TERMS_SECTIONS.map((section) => (
@@ -269,6 +281,7 @@ export default function Terms(){
                     </article>
                 </div>
             </div>
+            <ScrollToTopButton />
         </main>
     )
 }

@@ -1,16 +1,22 @@
-import { createRouter, createBrowserHistory } from "@tanstack/react-router";
+import {
+  createRouter,
+  createBrowserHistory,
+} from "@tanstack/react-router";
+
 import { routeTree } from "@/routeTree.gen";
 
 const history = createBrowserHistory();
+
 export const router = createRouter({
-    routeTree,
-    basepath: "/Lokestays/",
-    defaultPreload: 'intent',
-    scrollRestoration: true,
-    history
+  routeTree,
+  basepath: "/Lokestays",
+  defaultPreload: "intent",
+  scrollRestoration: true,
+  history,
 });
-declare module '@tanstack/react-router'{
-    interface Register {
-        router:  typeof router;
-    }
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
 }

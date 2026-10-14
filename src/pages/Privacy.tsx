@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, memo } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "@tanstack/react-router";
-
+import ScrollToTopButton from "@/components/common/ScrollToTopButton";
 const LAST_UPDATED = "October 11, 2026";
 const LAST_UPDATED_ISO = "2026-10-11";
 
@@ -181,13 +181,33 @@ const Breadcrumb = memo(() => (
       <li>
         <Link
           to="/"
-          className="text-[12px] capitalize text-[#222222] font-normal leading-[16px] hover:underline"
+          className="text-[12px]
+           capitalize text-[#222222]
+           underline-offset-4
+           hover:underline
+           focus-visible:rounded-md
+           focus-visible:offset-[#222222]
+           focus-visible:outline-offset-2
+           font-normal leading-[16px]
+           motion-reduce:transition-none
+           cursor-pointer"
+
         >
           Home
         </Link>
       </li>
       <li aria-hidden="true" className="text-[#222222]">/</li>
-      <li aria-current="page" className="text-[12px] capitalize text-[#222222] font-normal leading-[16px]">
+      <li aria-current="page" 
+          className="text-[12px]
+          underline-offset-4
+          focus-visible:rounded-md
+          focus-visible:offset-[#222222]
+          focus-visible:outline-offset-2
+          hover:underline
+          cursor-pointer
+          capitalize text-[#222222] 
+          motion-reduce:transition-none
+          font-normal leading-[16px]">
         Privacy Policy
       </li>
     </ol>
@@ -204,9 +224,9 @@ const TableOfContents = memo(({ sections, activeId }: TableOfContentsProps) => (
   <aside
     role="complementary"
     aria-label="Privacy policy table of contents"
-    className="h-fit rounded-xl border border-gray-200 p-5 lg:sticky lg:top-24"
+    className="hidden lg:block h-fit rounded-xl border border-gray-200 p-5 lg:sticky lg:top-24"
   >
-    <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[#6c6c6c]">
+    <h2 className="mb-3 text-[16px] leading-[24px] font-semibold uppercase tracking-wide text-[#6c6c6c]">
       On this page
     </h2>
     <nav aria-label="Privacy policy sections">
@@ -218,7 +238,7 @@ const TableOfContents = memo(({ sections, activeId }: TableOfContentsProps) => (
               <a
                 href={`#${section.id}`}
                 aria-current={isActive ? "location" : undefined}
-                className={`block text-sm leading-6 transition-colors hover:text-[#222222] ${
+                className={`block text-[14px] leading-[19px] transition-colors hover:text-[#222222] ${
                   isActive ? "font-semibold text-[#222222]" : "text-gray-500"
                 }`}
               >
@@ -246,11 +266,11 @@ const PrivacySectionBlock = memo(({ section }: { section: PrivacySection }) => (
     >
       {section.title}
     </h2>
-    <div className="space-y-4">
+    <div className="space-y-3">
       {section.content.map((paragraph, index) => (
         <p
           key={`${section.id}-${index}`}
-          className="text-sm leading-7 text-gray-600 sm:text-base"
+          className="text-[14px] leading-[19px] md:text-[15px] leading-[20px] text-gray-600 sm:text-base"
         >
           {paragraph}
         </p>
@@ -337,24 +357,24 @@ export default function Privacy() {
         <Breadcrumb />
 
         <header className="my-4 flex flex-col items-start gap-1.5">
-          <p className="text-[#6c6c6c] text-[14px] leading-[18px] font-normal">Legal Terms</p>
-          <h1 className="text-[27px] leading-[32px] md:text-[32px] md:leading-[36px] text-[#222222] font-semibold">
+          <p className="text-[#6c6c6c] text-[15px] leading-[20px] font-medium">Legal terms</p>
+          <h1 className="text-[24px] leading-[29px] md:text-[32px] md:leading-[36px] text-[#222222] font-semibold">
             Your privacy matters to us. Learn how Lokestays handles your personal
             information when you use our platform.
           </h1>
-          <p className="mt-1 text-sm leading-5 text-[#6c6c6c]">
+          <p className="mt-1 font-normal tracking-normal text-[12px] leading-[16px] text-[#6c6c6c]">
             Last updated:{" "}
             <time dateTime={LAST_UPDATED_ISO}>{LAST_UPDATED}</time>
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-10 py-8 lg:grid-cols-[240px_1fr]">
+        <div className="grid grid-cols-1 gap-10 py-4 lg:grid-cols-[240px_1fr]">
           <TableOfContents sections={PRIVACY_SECTIONS} activeId={activeId} />
 
           <article className="min-w-0">
             <div className="mb-10 rounded-xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
-              <h2 className="mb-2 text-lg font-semibold">About this policy</h2>
-              <p className="text-base leading-6 text-gray-600 sm:text-base">
+              <h2 className="mb-2 text-[15px] leading-[20px] font-semibold">About this policy</h2>
+              <p className="text-[15px] leading-[20px] text-gray-600 tracking-normal md:tracking-tight">
                 This policy explains how personal information may be processed
                 when you use Lokestays. The information we collect depends on the
                 features you use and the services currently integrated into the
@@ -370,6 +390,7 @@ export default function Privacy() {
           </article>
         </div>
       </div>
+      <ScrollToTopButton />
     </main>
   );
 }

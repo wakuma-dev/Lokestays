@@ -23,17 +23,17 @@ export default function FooterLegal(){
           aria-labelledby="footer-legal-heading"
           className="flex flex-col items-start gap-2">
         <h2 id="footer-legal-heading"
-            className="font-medium text-[#222222] text-base leading-6">
+            className="font-medium text-[#222222] text-[15px] leading-[20px] tracking-normal md:tracking-tight">
                 Legal
             </h2>
          <nav aria-label="Legal information">
-            <ul className="space-y-1.5">
+            <ul className="space-y-1">
               {LEGAL_LINKS.map(({path, label}) => (
                 <li key={path}>
                     <Link to={path}
                           target="_blank"
                           className="
-                          font-normal text-sm leading-5 text-[#222222]
+                          font-normal text-[15px] leading-[20px] tracking-normal text-[#222222]
                           transition-all duration-150 underline-offset-4
                           hover:underline focus-visible:outline-2
                            focus-visible:outline-offset-2 

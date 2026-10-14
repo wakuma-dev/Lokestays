@@ -10,7 +10,7 @@ export default function Footer(){
        className="bg-[#FBFBFB] w-full h-auto flex flex-col py-4">
         <div aria-hidden="true" className="w-full border-t-border-t-gray-200" />
         <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 
-        lg:px-0 flex flex-col md:flex-row justify-between
+        lg:px-0 grid grid-cols-1 md:grid-cols-3 gap-x-12 justify-end-safe
           py-3 md:py-5 gap-6 md:gap-8 lg:gap-x-12">
             <FooterAbout/>
             <FooterLegal />

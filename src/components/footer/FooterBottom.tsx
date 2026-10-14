@@ -41,7 +41,7 @@ export default function FooterBottom() {
         md:px-6 lg:px-0 lg:pb-10
       "
     >
-      <p className="text-base leading-6 font-normal text-[#222222]">
+      <p className="text-[15px] leading-[20px] tracking-normal font-normal text-[#222222]">
         © {currentYear} Lokestays. All rights reserved.
       </p>
 

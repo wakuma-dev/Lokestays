@@ -1,21 +1,24 @@
-import react from '@vitejs/plugin-react'
-import path from "path" 
-import { defineConfig } from 'vite'
-import tailwindcss from "@tailwindcss/vite"
-import { tanstackRouter } from "@tanstack/router-plugin/vite"
+import react from "@vitejs/plugin-react";
+import path from "node:path";
+import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
+
 export default defineConfig({
-  base: "/Lokestays/",
+ 
+
   plugins: [
-            tanstackRouter({
-              target: 'react',
-              autoCodeSplitting: true
-            }),
-            react(), 
-            tailwindcss()
-          ],
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+    }),
+    react(),
+    tailwindcss(),
+  ],
+  base: "/Lokestays/",
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src")
-    }
-  }
-})
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+});
