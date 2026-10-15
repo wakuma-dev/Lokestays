@@ -1,7 +1,7 @@
 import FooterBottom from "./FooterBottom"
 import FooterAbout from "./FooterAbout"
 import FooterLegal from "./FooterLegal"
-import QuickLinks from "./QuickLinks";
+import Contacts from "./Contacts";
 
 export default function Footer(){
     return(
@@ -10,11 +10,11 @@ export default function Footer(){
        className="bg-[#FBFBFB] w-full h-auto flex flex-col py-4">
         <div aria-hidden="true" className="w-full border-t-border-t-gray-200" />
         <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 
-        lg:px-0 grid grid-cols-1 md:grid-cols-3 gap-x-12 justify-end-safe
+        lg:px-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 justify-end-safe
           py-3 md:py-5 gap-6 md:gap-8 lg:gap-x-12">
             <FooterAbout/>
             <FooterLegal />
-            <QuickLinks />
+            <Contacts />
         </div>
         <div 
         aria-hidden="true"
