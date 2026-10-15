@@ -1,0 +1,1 @@
+import{n as e,t}from"./footer-Mf-BCupz.js";import{i as n,s as r}from"./index-D4iLHQ-7.js";var i=r();function a(){return(0,i.jsxs)(i.Fragment,{children:[(0,i.jsx)(e,{}),(0,i.jsx)(n,{}),(0,i.jsx)(t,{})]})}var o=a;export{o as component};
