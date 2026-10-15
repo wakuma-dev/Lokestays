@@ -1,0 +1,1 @@
+import{a as e,s as t}from"./index-By_EBMmr.js";var n=t(),r=e(`/_auth/login`)({component:i});function i(){return(0,n.jsx)(`div`,{children:`Hello "/_auth/login"!`})}export{r as Route};

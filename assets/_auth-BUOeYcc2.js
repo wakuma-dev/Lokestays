@@ -1,1 +1,0 @@
-import{s as e}from"./index-D4iLHQ-7.js";var t=e();function n(){return(0,t.jsx)(`div`,{children:`Hello "/_auth"!`})}export{n as component};
