@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin, type LucideIcon, Icon } from "lucide-react"
+import { Phone, Mail, MapPin, type LucideIcon } from "lucide-react"
 interface ContactProps {
   icon: LucideIcon,
   label: string;
