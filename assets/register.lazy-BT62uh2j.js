@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-Dk72oS4N.js";import{a as t}from"./index-BDP77Nvy.js";var n=e(),r=t(`/_auth/register`)({component:i});function i(){return(0,n.jsx)(`div`,{children:`Hello "/_auth/register"!`})}export{r as Route};
