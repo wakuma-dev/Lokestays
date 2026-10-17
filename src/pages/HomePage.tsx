@@ -32,7 +32,7 @@ export default function HomePage(){
 
       <label id="terms-label" className="text-sm">
         I accept the{" "}
-        <a href="/terms" className="text-teal-700 underline">
+        <a href="/terms" className="text-[#0f766e] underline">
           Terms and Conditions
         </a>{" "}
         and{" "}

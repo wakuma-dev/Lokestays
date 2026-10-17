@@ -182,7 +182,7 @@ export default function Register() {
             <div className="max-w-[90%] w-full mx-auto flex flex-col gap-2.5">
               <h1 className="font-semibold text-white text-[32px] leading-[37px] tracking-tight font-sans">
                 Find your <br />
-                <span className="text-teal-400">Perfect</span> Stay
+                <span className="text-[#0F766E]">Perfect</span> Stay
               </h1>
 
               <div className="flex flex-col space-y-0.5">

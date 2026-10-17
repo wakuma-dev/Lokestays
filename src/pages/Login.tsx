@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import img from "../assets/image/0ad05ce9939f87dbabaf4cfa418bffcd.jpg";
@@ -18,228 +18,190 @@ interface ListingItem {
 const listingItems: ListingItem[] = [
   {
     image: img,
-    title: "Find Your Perfect Stay",
+    title: "Find a Place to Call Home",
     description:
-      "Discover beautiful homes and comfortable spaces that make every trip feel like home.",
+      "Explore inviting homes and thoughtfully chosen spaces for your next stay.",
   },
   {
     image: img2,
-    title: "Feel at Home Anywhere",
+    title: "Comfort in Every Corner",
     description:
-      "Explore unique places to stay and enjoy comfort, convenience, and memorable experiences.",
+      "Enjoy welcoming spaces designed to make you feel comfortable wherever you go.",
   },
   {
     image: img3,
-    title: "Discover Your Next Destination",
+    title: "Your City, Your Way",
     description:
-      "From peaceful retreats to vibrant city apartments, find a place that fits your journey.",
+      "Discover apartments and homes that bring you closer to the places you want to explore.",
   },
   {
     image: img4,
-    title: "Stay Somewhere Special",
+    title: "Make Room for Memories",
     description:
-      "Make every journey memorable with welcoming spaces and stays tailored to your needs.",
+      "Find the right setting for new experiences, meaningful moments, and memorable journeys.",
   },
   {
     image: img5,
-    title: "Your Journey Starts Here",
+    title: "A Stay That Feels Right",
     description:
-      "Find a place you love, plan your next adventure, and make yourself at home.",
+      "Choose a space that suits your lifestyle, preferences, and plans.",
   },
   {
     image: img6,
-    title: "A Better Way to Stay",
+    title: "Find Your Place with Lokestays",
     description:
-      "Explore available properties and find the right space for your next getaway.",
+      "Discover available homes and make your next stay a little more special.",
   },
 ];
 
-const SLIDER_DURATION = 5000;
+const SLIDER_DURATION = 6000;
+const BORDER_RADIUS = 16;
 
 export default function Login() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(false);
-
-  const currentItem = listingItems[currentIndex];
-
+ const [dimensions, setDimensions] = useState({
+  width: 0,
+  height: 0
+ });
+ const progressBorderRef = useRef<HTMLDivElement>(null);
+ const currentItem = listingItems[currentIndex];
+ useEffect(() => {
+  const element = progressBorderRef.current;
+  if(!element) return;
+  const observer = new ResizeObserver(([entry]) => {
+    if(!entry) return;
+    setDimensions({
+      width: entry.contentRect.width,
+      height: entry.contentRect.height
+    });
+  });
+  observer.observe(element);
+  return () => observer.disconnect();
+  }, []);
+  
   useEffect(() => {
-    if (isPaused) {
-      return;
-    }
-
-    const timerId = window.setTimeout(() => {
-      setCurrentIndex(
-        (previousIndex) => (previousIndex + 1) % listingItems.length,
-      );
+    if(isPaused) return;
+    const timerId = setTimeout(() => {
+    setCurrentIndex((prev) => (prev + 1) % listingItems.length)
     }, SLIDER_DURATION);
 
-    return () => {
-      window.clearTimeout(timerId);
-    };
-  }, [currentIndex, isPaused]);
-
+    return () => window.clearTimeout(timerId);
+  }, [isPaused, currentIndex]);
   const handleNext = (): void => {
-    setCurrentIndex(
-      (previousIndex) => (previousIndex + 1) % listingItems.length,
-    );
-  };
-
-  const handlePrevious = (): void => {
-    setCurrentIndex(
-      (previousIndex) =>
-        (previousIndex - 1 + listingItems.length) % listingItems.length,
-    );
-  };
-
-  return (
-    <main className="min-h-screen h-auto w-full bg-[#fbfbfb] p-4 text-[#222222]">
-      <Helmet>
-        <title>Log In | Lokestays</title>
-        <meta
-          name="description"
-          content="Log in to your Lokestays account to manage your bookings and discover places to stay."
-        />
-        <meta name="robots" content="noindex, follow" />
-      </Helmet>
-
-      <div
-        className="mx-auto grid h-auto w-full max-w-6xl grid-cols-1
-          overflow-hidden rounded-3xl bg-white p-4
-          lg:h-[700px] lg:grid-cols-2"
-      >
-        {/* Left side: Image carousel */}
-        <section
-          aria-label="Discover places to stay"
-          aria-roledescription="carousel"
-          className="relative flex min-h-[500px] flex-col overflow-hidden rounded-xl lg:min-h-0"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onFocus={() => setIsPaused(true)}
-          onBlur={(event) => {
+    setCurrentIndex((prev) => (prev + 1) % listingItems.length);
+  }
+  const handleBack = (): void => {
+    setCurrentIndex((prev) => (prev - 1 + listingItems.length) % listingItems.length)
+  }
+  const { width, height} = dimensions;
+  const radius = Math.min(BORDER_RADIUS, width / 2, height / 2);
+  const borderPath =
+    width > 0 && height > 0
+      ? [
+          `M 0 ${height - radius}`,
+          `A ${radius} ${radius} 0 0 0 ${radius} ${height}`,
+          `H ${width - radius}`,
+          `A ${radius} ${radius} 0 0 0 ${width} ${height - radius}`,
+        ].join(" ")
+      : "";
+  return(
+   <main className="lg:bg-[#6d6e71] min-h-screen h-auto p-4 w-full">
+    <Helmet>
+      <title>Log In - Lokestays</title>
+      <meta name="description"
+            content="Log in to your Lokestays account to manage your bookings and discover places to stay."
+            />
+      <meta name="robots"
+            content="noindex, follow"
+            />
+    </Helmet>
+    <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 h-auto w-full
+     overflow-hidden bg-white rounded-3xl p-4 lg:h-[700px]">
+      <section 
+        aria-label="Discover places to stay"
+        aria-roledescription="carousel"
+        className="relative hidden lg:flex flex-col overflow-hidden rounded-xl min-h-0"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onFocus={() => setIsPaused(true)}
+            onBlur={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) {
               setIsPaused(false);
             }
-          }}
-        >
-          {/* Background image */}
-          <img
-            key={currentItem.image}
-            src={currentItem.image}
-            alt=""
-            fetchPriority={currentIndex === 0 ? "high" : "auto"}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-
-          {/* Gradient overlay */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-black/80
-             via-black/20 to-transparent"
-          />
-
-          {/* Slide content */}
-          <div
-            className="relative z-10 mt-auto p-5 text-white sm:p-8"
-            aria-live="off"
-          >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-green-300">
-              Lokestays
-            </p>
-
-            <h1
-              key={currentItem.title}
-              className="text-2xl font-bold leading-tight sm:text-3xl"
-            >
-              {currentItem.title}
-            </h1>
-
-            <p className="mt-3 max-w-md text-sm leading-6 text-white/90 sm:text-base">
-              {currentItem.description}
-            </p>
-
-            {/* Progress indicators and navigation */}
-            <div className="mt-8 flex items-center gap-4">
-              {/* Progress lines */}
-              <div
-                className="flex flex-1 items-center gap-2"
-                role="group"
-                aria-label={`Slide ${currentIndex + 1} of ${listingItems.length}`}
-              >
-                {listingItems.map((item, index) => (
-                  <div
-                    key={item.image}
-                    className="h-1 flex-1 overflow-hidden rounded-full bg-white/40"
-                  >
-                    <div
-                      key={`${currentIndex}-${index}`}
-                      className={`h-full rounded-full ${
-                        index === currentIndex
-                          ? isPaused
-                            ? "w-0 bg-green-500"
-                            : "animate-progress-fill bg-green-500"
-                          : index < currentIndex
-                            ? "w-full bg-green-500"
-                            : "w-0 bg-green-500"
-                      }`}
-                      style={
-                        index === currentIndex && isPaused
-                          ? { width: "0%" }
-                          : undefined
-                      }
+          }}>
+        <img key={currentItem.image}
+             src={currentItem.image}
+             alt=""
+             fetchPriority="high"
+             className="absolute w-full h-full inset-0 object-cover"
+             />
+             <div aria-hidden="true"
+                   className="absolute inset-0 bg-gradient-to-t from-black/80
+                    via-black/20 to-transparent"
                     />
-                  </div>
-                ))}
+              <div aria-live="off" className="absolute inset-x-0 top-3 w-full">
+              <div className="w-full max-w-[90%] mx-auto flex flex-col gap-2.5">
+                <h1 className="text-white font-semibold
+                 text-[32px] leading-[37px] tracking-tight font-sans">Your next <br />
+                 <span className="text-[#0f766e]">Stay</span> starts here</h1>
+                <div className="flex flex-col space-y-0.5">
+                  <p className="text-white font-normal tracking-normal text-[15px] leading-[20px]">Find a place that feels right for you.</p>
+                  <p className="text-white font-normal tracking-normal text-[15px] leading-[20px]">Comfort, convenience, and a better way to stay.</p>
+                </div>
               </div>
-
-              {/* Navigation buttons */}
-              <div className="flex shrink-0 items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={handlePrevious}
-                  aria-label="Previous slide"
-                  className="rounded-full border-white/60 bg-transparent text-white hover:bg-white hover:text-black"
-                >
-                  <ChevronLeft aria-hidden="true" size={20} />
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={handleNext}
-                  aria-label="Next slide"
-                  className="rounded-full border-white/60 bg-transparent text-white hover:bg-white hover:text-black"
-                >
-                  <ChevronRight aria-hidden="true" size={20} />
-                </Button>
               </div>
-            </div>
-
-            {/* Current slide counter */}
-            <p className="mt-4 text-xs text-white/75">
-              {String(currentIndex + 1).padStart(2, "0")} /{" "}
-              {String(listingItems.length).padStart(2, "0")}
-            </p>
-          </div>
+              <div aria-live="off" 
+                  className="absolute inset-x-0 bottom-3 w-full">
+                <div
+                ref={progressBorderRef}
+                className="carousel-progress-border w-full max-w-[90%] mx-auto
+                 relative flex items-start justify-between gap-3 rounded-2xl border
+                  border-white p-4">
+                 <div className="flex flex-col items-start space-y-2">
+                  <h2 className="text-white font-serif text-[32px] leading-[37px] tracking-normal">{currentItem.title}</h2>
+                  <p className="text-white text-[15px] leading-[20px] tracking-normal">{currentItem.description}</p>
+                 </div>
+                 <div className="flex gap-2 shrink-0">
+                  <Button 
+                    variant="outline"
+                    size="icon"
+                    onClick={handleBack}
+                    aria-label="Previous slide"
+                    className="rounded-full border-white/60 bg-transparent text-white
+                     hover:bg-white cursor-pointer hover:text-black">
+                    <ChevronLeft aria-hidden="true" size={20} />
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      size="icon"
+                      onClick={handleNext}
+                      aria-label="Next slide"
+                      className="rounded-full border-white/60 bg-transparent text-white
+                      hover:bg-white cursor-pointer hover:text-black">
+                        <ChevronRight aria-hidden="true" size={20} />
+                    </Button>
+                 </div>
+                 {width > 0 && height > 0 && (
+                  <svg
+                   key={currentItem.image}
+                   aria-hidden="true"
+                    className={`carousel-progress-track ${
+                    isPaused ? "is-paused" : ""
+                  }`}
+                  viewBox={`0 0 ${width} ${height}`}
+                  preserveAspectRatio="none">
+                    <path className="carousel-progress-path"
+                          d={borderPath}
+                          pathLength="100"
+                          />
+                  </svg>
+                 )}
+                </div>
+              </div>
         </section>
-
-        {/* Right side: Login form */}
-        <section className="flex items-center justify-center p-4 sm:p-8">
-          <div className="w-full max-w-md">
-            <h2 className="text-3xl font-bold tracking-tight text-[#222222]">
-              Welcome back
-            </h2>
-
-            <p className="mt-2 text-sm leading-6 text-gray-500">
-              Log in to your Lokestays account to continue.
-            </p>
-
-            {/* Add your existing login form here. */}
-          </div>
-        </section>
-      </div>
-    </main>
-  );
+        </div>
+   </main>
+  )
 }
+  

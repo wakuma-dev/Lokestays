@@ -16,13 +16,13 @@
   height: 100%;
   overflow: visible;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
 }
 
 .carousel-progress-path {
   fill: none;
-  stroke: #2dd4bf;
-  stroke-width: 2;
+  stroke: #0F766E;
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 100;
