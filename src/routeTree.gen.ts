@@ -14,6 +14,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as LegalRouteImport } from './routes/_legal'
 import { Route as MainRouteImport } from './routes/_main'
+import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
 
 const AuthLoginLazyRouteImport = createFileRoute('/_auth/login')()
@@ -32,6 +33,11 @@ const LegalRoute = LegalRouteImport.update({
 } as any)
 const MainRoute = MainRouteImport.update({
   id: '/_main',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginLazyRoute = AuthLoginLazyRouteImport.update({
@@ -71,6 +77,7 @@ const MainIndexRoute = MainIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
+  '/explore': typeof ExploreRoute
   '/login': typeof AuthLoginLazyRoute
   '/register': typeof AuthRegisterLazyRoute
   '/cookie': typeof LegalCookieLazyRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof MainIndexRoute
+  '/explore': typeof ExploreRoute
   '/login': typeof AuthLoginLazyRoute
   '/register': typeof AuthRegisterLazyRoute
   '/cookie': typeof LegalCookieLazyRoute
@@ -90,6 +98,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_legal': typeof LegalRouteWithChildren
   '/_main': typeof MainRouteWithChildren
+  '/explore': typeof ExploreRoute
   '/_auth/login': typeof AuthLoginLazyRoute
   '/_auth/register': typeof AuthRegisterLazyRoute
   '/_legal/cookie': typeof LegalCookieLazyRoute
@@ -99,14 +108,29 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/cookie' | '/privacy' | '/terms'
+  fullPaths:
+    | '/'
+    | '/explore'
+    | '/login'
+    | '/register'
+    | '/cookie'
+    | '/privacy'
+    | '/terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/cookie' | '/privacy' | '/terms'
+  to:
+    | '/'
+    | '/explore'
+    | '/login'
+    | '/register'
+    | '/cookie'
+    | '/privacy'
+    | '/terms'
   id:
     | '__root__'
     | '/_auth'
     | '/_legal'
     | '/_main'
+    | '/explore'
     | '/_auth/login'
     | '/_auth/register'
     | '/_legal/cookie'
@@ -119,6 +143,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   LegalRoute: typeof LegalRouteWithChildren
   MainRoute: typeof MainRouteWithChildren
+  ExploreRoute: typeof ExploreRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -142,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof MainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/login': {
@@ -229,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   LegalRoute: LegalRouteWithChildren,
   MainRoute: MainRouteWithChildren,
+  ExploreRoute: ExploreRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

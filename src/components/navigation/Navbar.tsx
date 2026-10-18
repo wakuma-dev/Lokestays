@@ -1,3 +1,4 @@
+import { SearchBar } from "../../feature/search";
 import Logo from "./Logo";
 import NavActions from "./NavActions";
 export default function Navbar(){
@@ -12,6 +13,7 @@ export default function Navbar(){
             <Logo />
             <NavActions />
          </nav>
+         <SearchBar />
          <div 
          aria-hidden="true"
          className="hidden md:block w-full border-t border-t-gray-200" />
