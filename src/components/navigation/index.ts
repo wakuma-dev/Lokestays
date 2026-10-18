@@ -1,3 +1,5 @@
 export { default as Logo } from "./Logo"
 export { default as Navbar } from "./Navbar"
 export { default as LegalNavbar } from "./LegalNavbar"
+export { default as NavActions } from "./NavActions"
+export { default as UserMenu } from "./UserMenu"

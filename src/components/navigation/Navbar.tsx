@@ -1,4 +1,5 @@
 import Logo from "./Logo";
+import NavActions from "./NavActions";
 export default function Navbar(){
     return(
         <header 
@@ -9,7 +10,7 @@ export default function Navbar(){
          className="hidden md:flex items-center justify-between w-full 
          max-w-[1400px] mx-auto px-4 md:px-6 lg:px-0">
             <Logo />
-            <h1>Abebe</h1>
+            <NavActions />
          </nav>
          <div 
          aria-hidden="true"
