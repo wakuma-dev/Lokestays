@@ -1,4 +1,4 @@
-import { useMemo, useReducer, useState } from "react";
+import { useReducer, useState } from "react";
 import {
   CalendarDays,
   MapPin,
@@ -186,53 +186,6 @@ export default function SearchBar({
       payload: null,
     });
   };
-
-  const desktopPanel = useMemo(() => {
-    switch (activePanel) {
-      case "destination":
-        return (
-          <DestinationPanel
-            query={destinationQuery}
-            selectedDestination={selectedDestination}
-            onQueryChange={handleDestinationQueryChange}
-            onSelectDestination={handleSelectDestination}
-            onClose={handleCloseDesktopPanel}
-          />
-        );
-
-      case "dates":
-        return (
-          <DatesPanel
-            checkIn={state.checkIn}
-            checkOut={state.checkOut}
-            today={today}
-            onSelectDate={handleSelectDate}
-            onClearDates={handleClearDates}
-            onClose={handleCloseDesktopPanel}
-          />
-        );
-
-      case "guests":
-        return (
-          <GuestsPanel
-            guests={guests}
-            onChange={handleGuestChange}
-            onClose={handleCloseDesktopPanel}
-          />
-        );
-
-      default:
-        return null;
-    }
-  }, [
-    activePanel,
-    destinationQuery,
-    selectedDestination,
-    state.checkIn,
-    state.checkOut,
-    today,
-    guests,
-  ]);
 
   if (isMobile) {
     return (
