@@ -1,3 +1,4 @@
+import ProfileMenu from "./ProfileMenu"
 export default function LegalNavbar(){
     return(
         <header 
@@ -7,7 +8,9 @@ export default function LegalNavbar(){
         <nav aria-label="Legal navigation"
               className="w-full max-w-[1400px] flex items-start px-4 md:px-6
                lg:px-0 justify-between mx-auto">
-            <span className="font-semibold text-[17px] leading-[24px] capitalize text-[#222222]">Help Center</span>
+            <span className="font-semibold text-[17px]
+             leading-[24px] capitalize text-[#222222]">Help Center</span>
+             <ProfileMenu />
         </nav>
         <div aria-hidden="true"
              className="w-full border-b border-b-gray-200"
