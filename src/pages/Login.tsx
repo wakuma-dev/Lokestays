@@ -20,7 +20,10 @@ interface ListingItem {
   title: string;
   description: string;
 }
-
+const AUTO_COMPLETE: Record<keyof LoginDataType, string> = {
+  email: "email",
+  password: "new-password"
+}
 const listingItems: ListingItem[] = [
   {
     image: img,
@@ -121,8 +124,10 @@ export default function Login() {
   onSubmit: async ({value}) => {
     try {
     add({
-      title: "Login Successfully"
-    })
+      type: "success",
+      title: "Success",
+      description: "User logged in successfully"
+    });
     await loginMutation.mutateAsync(value);
     const destination = search.redirect;
       if (
@@ -143,7 +148,9 @@ export default function Login() {
   }
     catch(error){
     add({
-      title: "Login failed"
+      type: "error",
+      title: "Error",
+      description: "User couldn't login"
     });
     }
   
@@ -199,7 +206,7 @@ export default function Login() {
             />
     </Helmet>
     <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 h-auto w-full
-     overflow-hidden bg-white rounded-3xl p-4 lg:h-[700px]">
+     overflow-hidden bg-white rounded-3xl md:p-4 lg:h-[700px]">
       <section 
         aria-label="Discover places to stay"
         aria-roledescription="carousel"
@@ -282,6 +289,69 @@ export default function Login() {
                 </div>
               </div>
         </section>
+        <section className="flex flex-col items-center justify-center">
+        <Card aria-labelledby="login-account" className="w-full max-w-md flex flex-col gap-4">
+          <CardHeader>
+            <CardTitle id="login-account" className="font-serif 
+            text-[24px] lg:text-[40px] leading-[32px] lg:leading-[44px] font-semibold tracking-tight">Welcome back!</CardTitle>
+            <CardDescription className="tracking-normal text-[#222222] font-sans font-normal">Sign in to your Lokestays account to discover comfortable stays and manage your bookings.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form 
+             noValidate
+             onSubmit={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              void form.handleSubmit();
+             }}>
+             <form.Field name="email">
+              {(field) => (
+                <MyInput 
+                 field={field}
+                 type="email"
+                 label="Email"
+                 placeholder="Enter your email address"
+                 autoComplete={AUTO_COMPLETE.email}
+                 />
+              )}
+             </form.Field>
+             <form.Field name="password">
+              {(field) => (
+                <MyInput
+                 field={field}
+                 label="Password"
+                 placeholder="Enter your password"
+                 isPasswordField
+                 autoComplete={AUTO_COMPLETE.password}
+                 />
+
+              )}
+             </form.Field>
+
+             </form>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-1.5">
+            <form.Subscribe 
+             selector={(state) => 
+              [state.canSubmit, state.isSubmitting, state.isValidating] as const}>
+              {([canSubmit, isSubmitting, isValidating]) => (
+                <Button 
+                  variant="default"
+                  disabled={!canSubmit || isSubmitting || isValidating}
+                  className="w-full bg-[#0f766e] font-semibold font-sans tracking-normal cursor-pointer text-[15px] leading-[20px]">
+                    {isSubmitting ? "log" : "Log in"}
+                  </Button>
+              )}
+            </form.Subscribe>
+               <span aria-label="Already account"
+                     className="text-[13px] text-[#222222] font-normal tracking-normal leading-[17px]">
+                Don't have an account?<Link to="/register"
+                 className="ml-1.5">Sign up</Link>
+               </span>
+          </CardFooter>
+        </Card>
+        </section>
+
         </div>
    </main>
   )
