@@ -8,10 +8,12 @@ import img4 from "../assets/image/ha-lHmne5MVg3k4_ozGpyuZwWAHPd0yBeckmk2rLYBH0YT
 import img5 from "../assets/image/o6CA4S7yhzH8YnoIOIWJmkRo_LhUB9RKSZYvZNFlKCQvmQ6iwVfiJAeLCR1wllGSewMU4HOZog8L3BfdVF_FIp-J08ILeD7OATyO-E-h0pxGKBNQw9ltGtrUtosQfKClxTvikOj74_vVMjDVwCbL4dxFT_vt4t4cCb-I9BBXzqXiq8XoHfntaSj1Gz32v8c3.jpg";
 import img6 from "../assets/image/yGtI_yUCSumYNBzU1Cgdz541hcX1-7atP0c836mS4-YcDFW5ZZrrjsDKy_a_RhNytSXf6kCrYtngh-8KsMHiVWqX-qKnPcXUL8nAewOZZzjoe2m6HE_3ACbE3vDifQnfp4OuCHDazoPMYhENpnF4Y-j9QYuHV9nEkr4tsyvWV-ZLvSPNZzVHa-jfrmUm8kdC.jpg";
 import { Button } from "@/components/ui/button";
-import { MyInput } from "@/feature/auth/components/FormInput";
+import { MyInput, type LoginDataType, loginSchema, useLogin } from "@/feature/auth";
 import { useForm}  from "@tanstack/react-form"
 import { useNavigate, Link } from "@tanstack/react-router";
-import { type LoginDataType, loginSchema } from "@/feature/auth/schema/authSchema";
+import { useToast } from "@/components/ui/toast";
+import { FirebaseError } from "firebase/app";
+import { Route } from "@/routes/_auth/login";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 interface ListingItem {
   image: string;
@@ -58,6 +60,39 @@ const listingItems: ListingItem[] = [
   },
 ];
 
+function getFirebaseLoginError(error: FirebaseError): string {
+  switch (error.code) {
+    case "auth/invalid-credential":
+      return "Incorrect email or password.";
+
+    case "auth/user-not-found":
+      return "User not found.";
+
+    case "auth/wrong-password":
+      return "Wrong password.";
+
+    case "auth/network-request-failed":
+      return "Network error. Please check your connection.";
+
+    case "auth/too-many-requests":
+      return "Too many attempts. Try again later.";
+
+    case "auth/user-disabled":
+      return "This account has been disabled.";
+
+    case "auth/operation-not-allowed":
+      return "Email login is currently disabled.";
+
+    default:
+      console.error(
+        "Firebase Login Error:",
+        error.code,
+        error.message
+      );
+
+      return "Something went wrong. Please try again.";
+  }
+}
 const SLIDER_DURATION = 6000;
 const BORDER_RADIUS = 16;
 
@@ -70,6 +105,49 @@ export default function Login() {
  });
  const progressBorderRef = useRef<HTMLDivElement>(null);
  const currentItem = listingItems[currentIndex];
+ const { add } = useToast();
+ const navigate = useNavigate();
+ const search = Route.useSearch();
+ const loginMutation = useLogin();
+ const form = useForm({
+  defaultValues: {
+   email: "",
+   password: ""
+  } satisfies LoginDataType,
+  validators: {
+    onBlur: loginSchema,
+    onSubmit: loginSchema
+  },
+  onSubmit: async ({value}) => {
+    try {
+    add({
+      title: "Login Successfully"
+    })
+    await loginMutation.mutateAsync(value);
+    const destination = search.redirect;
+      if (
+            destination &&
+            destination.startsWith("/") &&
+            !destination.startsWith("//")
+        ){
+          await navigate({
+            to: destination,
+            replace: true
+          })
+        }else {
+            await navigate({
+                to: "/",
+                replace: true,
+            });
+    }
+  }
+    catch(error){
+    add({
+      title: "Login failed"
+    });
+    }
+  
+ }, });
  useEffect(() => {
   const element = progressBorderRef.current;
   if(!element) return;
