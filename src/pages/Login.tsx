@@ -14,7 +14,8 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { useToast } from "@/components/ui/toast";
 import { FirebaseError } from "firebase/app";
 import { Route } from "@/routes/_auth/login";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 interface ListingItem {
   image: string;
   title: string;
@@ -102,6 +103,7 @@ const BORDER_RADIUS = 16;
 export default function Login() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [loginError, setLoginError] = useState("");
  const [dimensions, setDimensions] = useState({
   width: 0,
   height: 0
@@ -123,13 +125,13 @@ export default function Login() {
   },
   onSubmit: async ({value}) => {
     try {
+    await loginMutation.mutateAsync(value);
     add({
       type: "success",
       title: "Success",
       description: "User logged in successfully"
     });
-    await loginMutation.mutateAsync(value);
-    const destination = search.redirect;
+   const destination = search.redirect;
       if (
             destination &&
             destination.startsWith("/") &&
@@ -152,6 +154,12 @@ export default function Login() {
       title: "Error",
       description: "User couldn't login"
     });
+    if(error instanceof FirebaseError){
+      setLoginError(getFirebaseLoginError(error))
+    }else{
+      console.error("Unexpected error is occurred", error);
+      setLoginError("Something went wrong. Please try again");
+    }
     }
   
  }, });
@@ -205,7 +213,7 @@ export default function Login() {
             content="noindex, follow"
             />
     </Helmet>
-    <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 h-auto w-full
+    <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 justify-center h-screen w-full
      overflow-hidden bg-white rounded-3xl md:p-4 lg:h-[700px]">
       <section 
         aria-label="Discover places to stay"
@@ -291,19 +299,23 @@ export default function Login() {
         </section>
         <section className="flex flex-col items-center justify-center">
         <Card aria-labelledby="login-account" className="w-full max-w-md flex flex-col gap-4">
-          <CardHeader>
-            <CardTitle id="login-account" className="font-serif 
-            text-[24px] lg:text-[40px] leading-[32px] lg:leading-[44px] font-semibold tracking-tight">Welcome back!</CardTitle>
-            <CardDescription className="tracking-normal text-[#222222] font-sans font-normal">Sign in to your Lokestays account to discover comfortable stays and manage your bookings.</CardDescription>
+          <CardHeader className="flex flex-col items-center justify-center lg:items-start">
+            <CardTitle id="login-account" className="text-center lg:text-left font-serif 
+            text-[24px] lg:text-[40px] leading-[32px] lg:leading-[44px] 
+            font-semibold tracking-tight">Welcome back!</CardTitle>
+            <CardDescription className="text-center lg:text-left
+             tracking-normal text-[13px] leading-[17px] md:text-[15px] md:leading-[20px] text-[#222222] font-sans font-medium">Sign in to your Lokestays account to discover comfortable stays and manage your bookings.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form 
+            <form
+            id="login-form" 
              noValidate
              onSubmit={(event) => {
               event.preventDefault();
               event.stopPropagation();
               void form.handleSubmit();
-             }}>
+              
+             }} className="space-y-1.5">
              <form.Field name="email">
               {(field) => (
                 <MyInput 
@@ -327,7 +339,13 @@ export default function Login() {
 
               )}
              </form.Field>
-
+            {loginError && (
+              <p role="alert" 
+                 aria-live="assertive"
+                 className="text-red-400 text-xs">
+                {loginError}
+                 </p>
+            )}
              </form>
           </CardContent>
           <CardFooter className="flex flex-col gap-1.5">
@@ -337,16 +355,19 @@ export default function Login() {
               {([canSubmit, isSubmitting, isValidating]) => (
                 <Button 
                   variant="default"
-                  disabled={!canSubmit || isSubmitting || isValidating}
-                  className="w-full bg-[#0f766e] font-semibold font-sans tracking-normal cursor-pointer text-[15px] leading-[20px]">
-                    {isSubmitting ? "log" : "Log in"}
+                  form="login-form"
+                  type="submit"
+                  disabled={!canSubmit || isSubmitting || isValidating || loginMutation.isPending}
+                  className="w-full bg-[#0f766e] font-semibold font-sans 
+                  tracking-normal cursor-pointer text-[15px] leading-[20px]">
+                    {isSubmitting ? <Spinner /> : "Log in"}
                   </Button>
               )}
             </form.Subscribe>
                <span aria-label="Already account"
                      className="text-[13px] text-[#222222] font-normal tracking-normal leading-[17px]">
                 Don't have an account?<Link to="/register"
-                 className="ml-1.5">Sign up</Link>
+                 className="ml-1.5 font-semibold text-[#0f766e]">Sign up</Link>
                </span>
           </CardFooter>
         </Card>

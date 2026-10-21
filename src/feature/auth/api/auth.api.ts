@@ -1,6 +1,7 @@
 import { setDoc, getDoc, doc } from "firebase/firestore"
 import { auth, googleProvider, facebookProvider } from "@/lib/firebase/auth";
-import { createUserWithEmailAndPassword, signInWithPopup, getRedirectResult, signInWithRedirect, type AuthProvider, type User, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup,
+     getRedirectResult, signInWithRedirect, type AuthProvider, type User, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import type { LoginDataType, RegisterDataType } from "@/feature/auth";
 import { db } from "@/lib/firebase/firestore";
 
@@ -67,20 +68,22 @@ export const signup = async (data: RegisterDataType): Promise<void> => {
 export const login = async (data: LoginDataType): Promise<User> => {
     const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
     return userCredential.user;
-}
-export const loginWithGoogle = async () : Promise<User> => {
-    const userCredential = await signInWithPopup(auth, googleProvider);
-    await syncUserProfile(userCredential.user);
+};
+export const loginWithProvider = async (provider: AuthProvider): Promise<User> => {
+    const userCredential = await signInWithPopup(auth, provider);
+    await syncUserProfile(userCredential.user)
     return userCredential.user;
 }
+export const loginWithGoogle = async () : Promise<User> => {
+    return loginWithProvider(googleProvider);
+}
 export const loginWithFacebook = async (): Promise<User> => {
-    const userCredential = await signInWithPopup(auth, facebookProvider);
-    await syncUserProfile(userCredential.user);
-    return userCredential.user
+    return loginWithProvider(facebookProvider);
 }
 export const loginWithGoogleRedirect = async (): Promise<void> => {
     await signInWithRedirect(auth, googleProvider);
-}
+};
+
 export const loginWithFacebookRedirect = async (): Promise<void> => {
     await signInWithRedirect(auth, facebookProvider);
 }

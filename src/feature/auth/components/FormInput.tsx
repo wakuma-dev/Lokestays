@@ -52,7 +52,7 @@ export function MyInput({field, placeholder, autoComplete, type="string", isPass
   const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
   const errorMessage = hasError ? getErrorMessage(field.state.meta.errors) : undefined;
 return(
-  <Field className="flex flex-col space-y-1">
+  <Field className="flex flex-col space-y-0.5">
     <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
     <div className="relative">
         <Input 
@@ -65,7 +65,8 @@ return(
          aria-describedby={hasError ? `${field.name}-errors` : undefined}
          onBlur={field.handleBlur}
          onChange={(e) => field.handleChange(e.target.value)}
-         className="data-[invalid]:border-red-400 p-5 md:p-6 placeholder:text-[15px] placeholder:leading-[20px] placeholder:text-[#222222]"
+         className="data-[invalid]:border-red-400 p-5 md:p-6
+          placeholder:text-[15px] placeholder:leading-[20px] placeholder:text-[#222222]"
          />
          {isPasswordField && (
             <button type="button"
@@ -73,7 +74,8 @@ return(
                      aria-pressed={showPassword}
                      onClick={() => setShowPassword((prev) => !prev)}
                      className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer">
-                        {showPassword ? <EyeOff aria-hidden="true" size={18} /> : <Eye aria-hidden="true" size={18} />}
+                        {showPassword ? <EyeOff aria-hidden="true" className="text-[#222222]" size={17} />
+                                      : <Eye aria-hidden="true" className="text-[#222222]" size={17} />}
                      </button>
          )}
     </div>
