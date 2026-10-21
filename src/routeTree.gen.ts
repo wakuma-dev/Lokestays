@@ -14,9 +14,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as LegalRouteImport } from './routes/_legal'
 import { Route as MainRouteImport } from './routes/_main'
+import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
+import { Route as ProtectedWishlistRouteImport } from './routes/_protected/wishlist'
 
 const AuthRegisterLazyRouteImport = createFileRoute('/_auth/register')()
 const LegalCookieLazyRouteImport = createFileRoute('/_legal/cookie')()
@@ -33,6 +35,10 @@ const LegalRoute = LegalRouteImport.update({
 } as any)
 const MainRoute = MainRouteImport.update({
   id: '/_main',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProtectedRoute = ProtectedRouteImport.update({
+  id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -74,11 +80,17 @@ const MainIndexRoute = MainIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainRoute,
 } as any)
+const ProtectedWishlistRoute = ProtectedWishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => ProtectedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/explore': typeof ExploreRoute
   '/login': typeof AuthLoginRoute
+  '/wishlist': typeof ProtectedWishlistRoute
   '/register': typeof AuthRegisterLazyRoute
   '/cookie': typeof LegalCookieLazyRoute
   '/privacy': typeof LegalPrivacyLazyRoute
@@ -88,6 +100,7 @@ export interface FileRoutesByTo {
   '/': typeof MainIndexRoute
   '/explore': typeof ExploreRoute
   '/login': typeof AuthLoginRoute
+  '/wishlist': typeof ProtectedWishlistRoute
   '/register': typeof AuthRegisterLazyRoute
   '/cookie': typeof LegalCookieLazyRoute
   '/privacy': typeof LegalPrivacyLazyRoute
@@ -98,8 +111,10 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_legal': typeof LegalRouteWithChildren
   '/_main': typeof MainRouteWithChildren
+  '/_protected': typeof ProtectedRouteWithChildren
   '/explore': typeof ExploreRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_protected/wishlist': typeof ProtectedWishlistRoute
   '/_auth/register': typeof AuthRegisterLazyRoute
   '/_legal/cookie': typeof LegalCookieLazyRoute
   '/_legal/privacy': typeof LegalPrivacyLazyRoute
@@ -112,6 +127,7 @@ export interface FileRouteTypes {
     | '/'
     | '/explore'
     | '/login'
+    | '/wishlist'
     | '/register'
     | '/cookie'
     | '/privacy'
@@ -121,6 +137,7 @@ export interface FileRouteTypes {
     | '/'
     | '/explore'
     | '/login'
+    | '/wishlist'
     | '/register'
     | '/cookie'
     | '/privacy'
@@ -130,8 +147,10 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_legal'
     | '/_main'
+    | '/_protected'
     | '/explore'
     | '/_auth/login'
+    | '/_protected/wishlist'
     | '/_auth/register'
     | '/_legal/cookie'
     | '/_legal/privacy'
@@ -143,6 +162,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   LegalRoute: typeof LegalRouteWithChildren
   MainRoute: typeof MainRouteWithChildren
+  ProtectedRoute: typeof ProtectedRouteWithChildren
   ExploreRoute: typeof ExploreRoute
 }
 
@@ -167,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof MainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_protected': {
+      id: '/_protected'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ProtectedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -218,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_protected/wishlist': {
+      id: '/_protected/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof ProtectedWishlistRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
   }
 }
 
@@ -257,10 +291,23 @@ const MainRouteChildren: MainRouteChildren = {
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
 
+interface ProtectedRouteChildren {
+  ProtectedWishlistRoute: typeof ProtectedWishlistRoute
+}
+
+const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedWishlistRoute: ProtectedWishlistRoute,
+}
+
+const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
+  ProtectedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   LegalRoute: LegalRouteWithChildren,
   MainRoute: MainRouteWithChildren,
+  ProtectedRoute: ProtectedRouteWithChildren,
   ExploreRoute: ExploreRoute,
 }
 export const routeTree = rootRouteImport

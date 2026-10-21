@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
-import { MyInput, type RegisterDataType, registerSchema, useSignup  } from "@/feature/auth";
+import { MyInput, type RegisterDataType, MyCheckbox, registerSchema, useSignup  } from "@/feature/auth";
 import { FirebaseError } from "firebase/app";
 import { Spinner } from "@/components/ui/spinner";
 import { useNavigate, Link } from "@tanstack/react-router";
@@ -82,7 +82,8 @@ const AUTO_COMPLETE: Record<keyof RegisterDataType, string> = {
   lastName: "family-name",
   email: "email",
   password: "new-password",
-  confirmPassword: "new-password"
+  confirmPassword: "new-password",
+  agreeTerms: "off"
 }
 export default function Register() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -98,7 +99,8 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    } satisfies RegisterDataType,
+    agreeTerms: false
+    } as RegisterDataType,
     validators: {
       onBlur: registerSchema,
       onSubmit: registerSchema
@@ -327,8 +329,8 @@ export default function Register() {
             </div>
           </div>
         </section>
-        <section className="flex flex-col items-center justify-center">
-          <Card
+        <section className="flex flex-col justify-start md:items-center md:justify-center">
+          <Card size="default"
                 aria-labelledby="signup-account"
                 className="w-full max-w-md flex flex-col gap-4">
             <CardHeader className="flex flex-col items-center justify-center lg:items-start">
@@ -406,6 +408,13 @@ export default function Register() {
                    isPasswordField
                    autoComplete={AUTO_COMPLETE.confirmPassword}
                    label="Confirm password"
+                   />
+                )}
+              </form.Field>
+              <form.Field name="agreeTerms">
+                {(field) => (
+                  <MyCheckbox 
+                   field={field}
                    />
                 )}
               </form.Field>

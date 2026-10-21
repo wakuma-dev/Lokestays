@@ -65,7 +65,7 @@ return(
          aria-describedby={hasError ? `${field.name}-errors` : undefined}
          onBlur={field.handleBlur}
          onChange={(e) => field.handleChange(e.target.value)}
-         className="data-[invalid]:border-red-400 p-5 md:p-6
+         className="data-[invalid]:border-red-400 p-5 
           placeholder:text-[15px] placeholder:leading-[20px] placeholder:text-[#222222]"
          />
          {isPasswordField && (

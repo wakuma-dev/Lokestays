@@ -7,6 +7,7 @@ export type {
 } from "./schema/authSchema";
 
 export { MyInput } from "./components/FormInput";
+export { MyCheckbox } from "./components/FormCheckbox"
 export { useAuthStore } from "./store/authStore"
 export { default as useAuth } from "./hooks/useAuth"
 export { useLogin, useSignup } from "./mutations/authMutations"
