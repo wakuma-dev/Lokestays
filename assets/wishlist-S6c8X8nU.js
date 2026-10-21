@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-BkSabwWG.js";var t=e();function n(){return(0,t.jsx)(`main`,{children:(0,t.jsx)(`h1`,{children:`Wishlist`})})}var r=n;export{r as component};
