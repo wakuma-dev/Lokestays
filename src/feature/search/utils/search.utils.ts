@@ -8,7 +8,7 @@ export interface SearchGuests {
 
 export interface SearchValues {
   location: string;
-  dates?: DateRange;
+  dates: DateRange | undefined;
   guests: SearchGuests;
 }
 

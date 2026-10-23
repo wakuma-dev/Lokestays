@@ -1,20 +1,21 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Search,
   X,
-  Navigation,
   Landmark,
   DoorClosed,
   Home,
+  type LucideIcon,
 } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 
 import { Calendar } from "@/components/ui/calendar";
+import type { SearchValues } from "../utils/search.utils";
 
 type Tabs = "where" | "when" | "who";
 
 interface LocationProps {
-  icon: typeof Navigation;
+  icon: LucideIcon;
   title: string;
   subTitle: string;
 }
@@ -27,24 +28,19 @@ interface UserProps {
 
 const locations: LocationProps[] = [
   {
-    icon: Navigation,
-    title: "Nearby",
-    subTitle: "Find what's around you",
-  },
-  {
     icon: Landmark,
-    title: "Addis Ababa, Ethiopia",
+    title: "Addis Ababa",
     subTitle: "Near you",
   },
   {
     icon: DoorClosed,
-    title: "Dar es Salaam, Tanzania",
-    subTitle: "A hidden gem",
+    title: "Hawassa",
+    subTitle: "Explore stays by the lake",
   },
   {
     icon: Home,
-    title: "Nairobi, Kenya",
-    subTitle: "For sights like Uhuru Park",
+    title: "Bahir Dar",
+    subTitle: "Discover stays by Lake Tana",
   },
 ];
 
@@ -66,18 +62,6 @@ const userRanges: UserProps[] = [
   },
 ];
 
-type Guests = {
-  adults: number;
-  children: number;
-  infants: number;
-};
-
-export type SearchValues = {
-  location: string;
-  dates: DateRange | undefined;
-  guests: Guests;
-};
-
 interface MobileSearchBarProps {
   onSearch: (values: SearchValues) => void;
 }
@@ -87,26 +71,52 @@ export default function MobileSearchBar({
 }: MobileSearchBarProps) {
   const [activeTab, setActiveTab] = useState<Tabs>("where");
   const [isOpen, setIsOpen] = useState(false);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+  const destinationInputRef = useRef<HTMLInputElement>(null);
+  const wasOpenRef = useRef(false);
 
   const [location, setLocation] = useState("");
   const [dates, setDates] = useState<DateRange | undefined>();
 
-  const [guests, setGuests] = useState<Guests>({
-    adults: 0,
+  const [guests, setGuests] = useState<SearchValues["guests"]>({
+    adults: 1,
     children: 0,
     infants: 0,
   });
+  const [today] = useState(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  });
 
-  const updateGuest = (type: keyof Guests, amount: number) => {
+  useEffect(() => {
+    if (!isOpen) {
+      if (wasOpenRef.current) {
+        wasOpenRef.current = false;
+        searchButtonRef.current?.focus();
+      }
+      return;
+    }
+
+    wasOpenRef.current = true;
+    destinationInputRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [isOpen]);
+
+  const updateGuest = (type: keyof SearchValues["guests"], amount: number) => {
     setGuests((prev) => ({
       ...prev,
-      [type]: Math.max(0, prev[type] + amount),
+      [type]: Math.max(type === "adults" ? 1 : 0, prev[type] + amount),
     }));
   };
 
   const clearGuests = () => {
     setGuests({
-      adults: 0,
+      adults: 1,
       children: 0,
       infants: 0,
     });
@@ -139,7 +149,14 @@ export default function MobileSearchBar({
     return (
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        ref={searchButtonRef}
+        aria-label="Open stay search"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        onClick={() => {
+          setActiveTab("where");
+          setIsOpen(true);
+        }}
         className="md:hidden flex items-center justify-center w-full bg-white rounded-full p-4"
       >
         <Search size={14} />
@@ -152,7 +169,27 @@ export default function MobileSearchBar({
   }
 
   return (
-    <div className="md:hidden block relative w-full h-screen">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Search for a stay"
+      className="md:hidden fixed inset-0 z-[60] block h-[100dvh] w-full overflow-y-auto bg-gray-50 px-4 pb-8 pt-4"
+      onKeyDown={(event) => {
+        if (event.key !== "Tab") return;
+        const focusable = event.currentTarget.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        const first = focusable.item(0);
+        const last = focusable.item(focusable.length - 1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }}
+    >
       {/* CLOSE */}
       <button
         type="button"
@@ -185,6 +222,7 @@ export default function MobileSearchBar({
                 />
 
                 <input
+                  ref={destinationInputRef}
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   onKeyDown={(e) => {
@@ -299,6 +337,7 @@ export default function MobileSearchBar({
                       setActiveTab("who");
                     }
                   }}
+                  disabled={{ before: today }}
                   numberOfMonths={1}
                 />
               </div>
@@ -353,7 +392,7 @@ export default function MobileSearchBar({
                       <button
                         type="button"
                         onClick={() => updateGuest(user.id, -1)}
-                        disabled={guests[user.id] === 0}
+                        disabled={guests[user.id] <= (user.id === "adults" ? 1 : 0)}
                         className="flex h-8 w-8 items-center justify-center rounded-full border disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         −
@@ -366,7 +405,14 @@ export default function MobileSearchBar({
                       <button
                         type="button"
                         onClick={() => updateGuest(user.id, 1)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border"
+                        disabled={
+                          user.id === "adults"
+                            ? guests.adults + guests.children >= 15 || guests.adults >= 13
+                            : user.id === "children"
+                              ? guests.adults + guests.children >= 15
+                              : guests.infants >= 5
+                        }
+                        className="flex h-8 w-8 items-center justify-center rounded-full border disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         +
                       </button>

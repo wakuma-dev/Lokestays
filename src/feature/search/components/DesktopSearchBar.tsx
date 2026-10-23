@@ -1,189 +1,225 @@
-import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { X,
- Search,
-  Navigation,
-  Landmark,
-  DoorClosed,
-  Home,
-  type LucideIcon,
-} from "lucide-react";
-import { Tabs, TabsTrigger, TabsContent, TabsList } from "@/components/ui/tabs";
-interface LocationOptions {
-  icon: LucideIcon,
-  title: string;
-  subTitle: string;
-  iconBg: string;
-  iconColor: string;
+import { useState } from "react";
+import { format } from "date-fns";
+import { Search, X } from "lucide-react";
+import type { DateRange } from "react-day-picker";
+import { Calendar } from "@/components/ui/calendar";
+import type { SearchValues } from "../utils/search.utils";
+
+interface DesktopSearchBarProps {
+  onSearch: (values: SearchValues) => void;
 }
-const locations: LocationOptions[] = [
-   {
-    icon: Navigation,
-    title: "Nearby",
-    subTitle: "Find places to stay near you",
-    iconBg: "bg-emerald-100",
-    iconColor: "text-emerald-700",
-  },
-  {
-    icon: Landmark,
-    title: "Addis Ababa",
-    subTitle: "Explore stays in Ethiopia's capital",
-    iconBg: "bg-rose-100",
-    iconColor: "text-rose-700",
-  },
-  {
-    icon: DoorClosed,
-    title: "Hawassa",
-    subTitle: "Relax near the lakeside",
-    iconBg: "bg-sky-100",
-    iconColor: "text-sky-700",
-  },
-  {
-    icon: Home,
-    title: "Bahir Dar",
-    subTitle: "Discover stays by Lake Tana",
-    iconBg: "bg-amber-100",
-    iconColor: "text-amber-700",
-  },
-];
 
-export default function DesktopSearchBar(){
-  const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
+type SearchPanel = "where" | "when" | "who" | null;
+
+const destinations = ["Addis Ababa", "Hawassa", "Bahir Dar"];
+
+export default function DesktopSearchBar({
+  onSearch,
+}: DesktopSearchBarProps) {
+  const [panel, setPanel] = useState<SearchPanel>(null);
   const [location, setLocation] = useState("");
-  const [activeTab, setActiveTab] = useState("where")
-  const containerRef = useRef<HTMLDivElement>(null);
-  const handleTabClick = (tabValue: string) => {
-  if(activeTab === tabValue){
-    setIsOpen((prev) => !prev)
-  }else{
-    setIsOpen(true);
-    setActiveTab(tabValue)
-  }
-  }
-   const handleSearch = () => {
+  const [dates, setDates] = useState<DateRange | undefined>();
+  const [guests, setGuests] = useState({ adults: 1, children: 0, infants: 0 });
+  const [today] = useState(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  });
 
-setIsOpen(false);
+  const updateGuest = (guest: keyof typeof guests, amount: number) => {
+    setGuests((current) => ({
+      ...current,
+      [guest]: Math.max(guest === "adults" ? 1 : 0, current[guest] + amount),
+    }));
+  };
 
-navigate(
+  const submitSearch = () => {
+    setPanel(null);
+    onSearch({ location, dates, guests });
+  };
 
-buildSearchUrl({
+  const dateLabel = dates?.from
+    ? `${format(dates.from, "MMM d")}${dates.to ? ` – ${format(dates.to, "MMM d")}` : ""}`
+    : "Add dates";
+  const guestCount = guests.adults + guests.children;
 
-location,
-
-dates,
-
-guests,
-
-})
-
-);
-
-}; 
-  return(
-    <div ref={containerRef} className="relative inline-block">
-    <Tabs 
-      value={isOpen ? activeTab : ""}
-      className="hidden data-active:bg-[#ebebeb] bg-white rounded-full md:block w-full max-w-[800px] mx-auto">
-   <TabsList>
-    <TabsTrigger 
-     value="where"
-     onClick={() => handleTabClick("where")}
-     className="p-3 hover:rounded-full flex flex-col items-start">
-      <span>Where</span>
-      <div className="relative">
-        <Search 
-         size={16}
-         className="absolute top-1/2 -translate-y-1/2"
-         />
-      </div>
-     </TabsTrigger>
-      <TabsTrigger 
-     value="when"
-     onClick={() => handleTabClick("when")}
-     className="p-3 hover:rounded-full flex flex-col items-start">
-      <span>Where</span>
-      <div className="relative">
-        <Search 
-         size={16}
-         className="absolute top-1/2 -translate-y-1/2"
-         />
-      </div>
-     </TabsTrigger>
-     <TabsTrigger 
-     value="who"
-     onClick={() => handleTabClick("who")}
-     className="p-3 rounded-full flex flex-col items-start">
-      <span>Where</span>
-      <div className="relative">
-        <Search 
-         size={16}
-         className="absolute top-1/2 -translate-y-1/2"
-         />
-      </div>
-      <div role="button"
-           tabIndex={0}
-           onClick={(e) => {
-            e.stopPropagation();
-            handleSearch();
-           }}
-     </TabsTrigger>
-   </TabsList>
-   {isOpen && (
-    <>
-      <TabsContent value="where" className="left-0 w-[400px]">
-      <div className="flex flex-col gap-2.5
-       rounded-4xl border bg-white px-5 py-7 shadow-md">
-  {locations.map((item) => {
-    const Icon = item.icon;
-
-    return (
-      <button
-        key={item.title}
-        type="button"
-        onClick={() => {
-        setLocation(item.title);
-        setActiveTab("when");
-      }}
-        className="flex w-full items-center gap-4 rounded-xl 
-         text-left transition-colors duration-200 hover:bg-[#ebebeb]
-          focus-visible:outline-none focus-visible:ring-2
-           focus-visible:ring-gray-300"
-      >
-        <div className={`flex h-14 w-14 shrink-0 
-        items-center justify-center rounded-lg opacity-35 ${item.iconBg}`}>
-          <Icon size={22} className={item.iconColor}/>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-gray-900">
-            {item.title}
+  return (
+    <div className="relative mx-auto hidden w-full max-w-2xl md:block">
+      <div className="flex items-center rounded-full border border-gray-200 bg-white p-2 shadow-sm">
+        <button
+          type="button"
+          aria-expanded={panel === "where"}
+          onClick={() => setPanel(panel === "where" ? null : "where")}
+          className="min-w-0 flex-1 rounded-full px-5 py-2 text-left hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+        >
+          <span className="block text-xs font-semibold">Where</span>
+          <span className="block truncate text-sm text-gray-600">
+            {location || "Search destinations"}
           </span>
-
-          <span className="text-sm text-gray-500">
-            {item.subTitle}
+        </button>
+        <button
+          type="button"
+          aria-expanded={panel === "when"}
+          onClick={() => setPanel(panel === "when" ? null : "when")}
+          className="min-w-0 flex-1 border-l border-gray-200 px-5 py-2 text-left hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+        >
+          <span className="block text-xs font-semibold">When</span>
+          <span className="block truncate text-sm text-gray-600">{dateLabel}</span>
+        </button>
+        <button
+          type="button"
+          aria-expanded={panel === "who"}
+          onClick={() => setPanel(panel === "who" ? null : "who")}
+          className="min-w-0 flex-1 border-l border-gray-200 px-5 py-2 text-left hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+        >
+          <span className="block text-xs font-semibold">Who</span>
+          <span className="block truncate text-sm text-gray-600">
+            {guestCount} {guestCount === 1 ? "guest" : "guests"}
           </span>
-        </div>
-      </button>
-    );
-  })}
-</div>
+        </button>
+        <button
+          type="button"
+          aria-label="Search stays"
+          onClick={submitSearch}
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rose-600 text-white transition-colors hover:bg-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
+        >
+          <Search size={20} aria-hidden="true" />
+        </button>
+      </div>
 
-        
-      </TabsContent>
-      <TabsContent value="when" className="w-full left-0">
-        <div className="bg-white p-4 rounded-4xl shadow-md">
-      na
-        </div>
-      </TabsContent>
-      <TabsContent value="who" className="w-[400px] right-0">
-        <div className="bg-white p-4 rounded-4xl shadow-md">
-          na
-        </div>
-      </TabsContent>
-    </>
-   )}
-      </Tabs>
+      {panel && (
+        <section
+          aria-label={`${panel} search options`}
+          className="absolute left-0 right-0 top-full z-50 mt-3 max-h-[min(70vh,32rem)] overflow-y-auto rounded-3xl border border-gray-100 bg-white p-5 shadow-xl"
+        >
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">
+              {panel === "where" ? "Choose a destination" : panel === "when" ? "Choose your dates" : "Add guests"}
+            </h2>
+            <button
+              type="button"
+              aria-label="Close search options"
+              onClick={() => setPanel(null)}
+              className="rounded-full p-2 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {panel === "where" && (
+            <div className="space-y-3">
+              <label className="sr-only" htmlFor="desktop-destination">
+                Destination
+              </label>
+              <input
+                id="desktop-destination"
+                value={location}
+                onChange={(event) => setLocation(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") submitSearch();
+                }}
+                placeholder="Search by city"
+                autoComplete="off"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-200"
+              />
+              <div className="flex flex-wrap gap-2">
+                {destinations.map((destination) => (
+                  <button
+                    key={destination}
+                    type="button"
+                    onClick={() => {
+                      setLocation(destination);
+                      setPanel("when");
+                    }}
+                    className="rounded-full border border-gray-200 px-4 py-2 text-sm hover:border-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                  >
+                    {destination}
+                  </button>
+                ))}
+                {location && (
+                  <button
+                    type="button"
+                    onClick={() => setLocation("")}
+                    className="rounded-full px-3 py-2 text-sm text-gray-600 underline"
+                  >
+                    Clear destination
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {panel === "when" && (
+            <div className="flex justify-center overflow-x-auto">
+              <Calendar
+                mode="range"
+                selected={dates}
+                onSelect={setDates}
+                disabled={{ before: today }}
+                numberOfMonths={2}
+                autoFocus
+              />
+            </div>
+          )}
+
+          {panel === "who" && (
+            <div className="space-y-4">
+              {([
+                ["adults", "Adults", "Ages 13 or above"],
+                ["children", "Children", "Ages 2–12"],
+                ["infants", "Infants", "Under 2"],
+              ] as const).map(([guest, label, description]) => (
+                <div key={guest} className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">{label}</p>
+                    <p className="text-sm text-gray-500">{description}</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <button
+                      type="button"
+                      aria-label={`Remove one ${label.toLowerCase()}`}
+                      disabled={guests[guest] <= (guest === "adults" ? 1 : 0)}
+                      onClick={() => updateGuest(guest, -1)}
+                      className="h-9 w-9 rounded-full border disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      −
+                    </button>
+                    <span aria-live="polite" className="min-w-4 text-center">
+                      {guests[guest]}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Add one ${label.toLowerCase()}`}
+                      disabled={
+                        guest === "adults"
+                          ? guests.adults >= 13 || guestCount >= 15
+                          : guest === "children"
+                            ? guestCount >= 15
+                            : guests.infants >= 5
+                      }
+                      onClick={() => updateGuest(guest, 1)}
+                      className="h-9 w-9 rounded-full border disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-5 flex justify-end border-t pt-4">
+            <button
+              type="button"
+              onClick={submitSearch}
+              className="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-5 py-3 font-medium text-white hover:bg-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
+            >
+              <Search size={18} aria-hidden="true" />
+              Search stays
+            </button>
+          </div>
+        </section>
+      )}
     </div>
-  )
+  );
 }

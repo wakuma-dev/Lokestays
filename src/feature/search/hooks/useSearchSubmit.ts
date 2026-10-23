@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
 
 import { searchSchema } from "../schema/searchSchema";
-import type { SearchValues } from "../components/DesktopSearchBar";
+import type { SearchValues } from "../utils/search.utils";
 
 export function useSearchSubmit() {
   const navigate = useNavigate();
