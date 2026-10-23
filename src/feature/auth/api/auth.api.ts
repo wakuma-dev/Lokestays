@@ -38,8 +38,13 @@ const syncUserProfile = async (user: User, names?: Pick<RegisterDataType, "first
 }
 export const signup = async (data: RegisterDataType) => {
     const { firstName, lastName, email, password } = data;
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await syncUserProfile(userCredential.user, {firstName, lastName});
+    const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+    try {
+        await syncUserProfile(userCredential.user, {firstName, lastName})
+    }catch(error: unknown){
+        console.error("Failed to synchronize the user profile:", error);
+        throw error
+    }
     await signOut(auth);
 }
 export const login = async (data: LoginDataType) => {

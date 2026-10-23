@@ -35,10 +35,10 @@ export default function FooterBottom() {
   return (
     <div
       className="
-        mx-auto flex w-full max-w-[1400px] flex-col-reverse
+        mx-auto flex w-full max-w-[1600px] flex-col-reverse
         items-start gap-2 px-4
         md:flex-row md:items-center md:justify-between md:gap-0
-        md:px-6 lg:px-0 lg:pb-10
+        md:px-8 lg:px-12 lg:pb-10
       "
     >
       <p className="text-[15px] leading-[20px] tracking-normal font-normal text-[#222222]">
