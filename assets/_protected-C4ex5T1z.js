@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-BkSabwWG.js";import{r as t,t as n}from"./footer-BG9dB5pI.js";import{X as r}from"./index-he0C0k6q.js";var i=e();function a(){return(0,i.jsxs)(i.Fragment,{children:[(0,i.jsx)(t,{}),(0,i.jsx)(`main`,{children:(0,i.jsx)(r,{})}),(0,i.jsx)(n,{})]})}var o=a;export{o as component};
