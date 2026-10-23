@@ -217,9 +217,8 @@ export default function Register() {
       </Helmet>
 
       <div
-        className="mx-auto w-full max-w-6xl bg-white md:p-4 overflow-hidden 
-        grid grid-cols-1 lg:grid-cols-2 justify-center h-screen
-           lg:h-[700px] rounded-3xl"
+        className="mx-auto w-full max-w-6xl bg-[#FBFBFB] p-4 overflow-hidden grid grid-cols-1 lg:grid-cols-2
+          h-auto lg:h-[700px] rounded-3xl"
       >
         <section
           aria-label="Discover places to stay"

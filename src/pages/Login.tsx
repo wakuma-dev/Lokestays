@@ -213,8 +213,8 @@ export default function Login() {
             content="noindex, follow"
             />
     </Helmet>
-    <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 justify-center h-screen w-full
-     overflow-hidden bg-white rounded-3xl md:p-4 lg:h-[700px]">
+    <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 h-auto w-full
+     overflow-hidden bg-white rounded-3xl p-4 lg:h-[700px]">
       <section 
         aria-label="Discover places to stay"
         aria-roledescription="carousel"
