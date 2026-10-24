@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-Cx0BB4qO.js";import{n as t}from"./Match-bop7mqyk.js";import{r as n,t as r}from"./footer-BhgYpeI0.js";import{t as i}from"./tab-bar-BqKddZIP.js";var a=e();function o(){return(0,a.jsxs)(a.Fragment,{children:[(0,a.jsx)(n,{}),(0,a.jsx)(`main`,{children:(0,a.jsx)(t,{})}),(0,a.jsx)(r,{}),(0,a.jsx)(i,{})]})}var s=o;export{s as component};
