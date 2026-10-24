@@ -15,8 +15,8 @@ const tabItems: readonly TabBarItem[] = [
   },
   {
     icon: Heart,
-    label: "Favorites",
-    path: "/favorites",
+    label: "Wishlists",
+    path: "/wishlist",
   },
   {
     icon: CircleUser,

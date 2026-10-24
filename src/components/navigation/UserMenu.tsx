@@ -1,8 +1,20 @@
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { Menu } from "lucide-react"
 import { Button } from "../ui/button"
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { useAuthStore } from "@/feature/auth"
+import { logout } from "@/feature/auth"
 export default function UserMenu(){
+  const navigate = useNavigate();
+  const authUser = useAuthStore((state) => state.user);
+  const handleLogout = async () => {
+try {
+    await logout();
+   await navigate({to: "/"})
+    }
+catch(error: unknown){
+    console.error("Failed to log out:", error);
+}}
   return(
     <Popover>
       <PopoverTrigger
@@ -37,10 +49,20 @@ export default function UserMenu(){
         <span className="text-[12px] text-[#6c6c6c] leading-[16px] tracking-normal">it's easy to starting hosting and earn extra income</span>
          </div>
          <div className="w-full border-t my-1.5 border-t-[#222222]" />
-         <Link to="/login" className="text-[15px] font-normal transition-colors p-1.5 duration-150  rounded-md
-          hover:bg-[#ebebeb]  text-[#222222] font-normal">
+         {authUser ? (
+          <button type="button"
+                   onClick={handleLogout}
+                   className="text-[15px] cursor-pointer text-left rounded-md font-normal 
+                   transition-colors p-1.5 outline-none duration-150 hover:bg-[#ebebeb] 
+                   text-[#222222]">
+          Log out
+          </button>
+         ) : (
+         <Link to="/login" className="text-[15px] font-normal
+          transition-colors p-1.5 duration-150  rounded-md
+          hover:bg-[#ebebeb]  text-[#222222]">
          Log in or sign up</Link>
-         
+          )}
          </div>
       </PopoverContent>
     </Popover>

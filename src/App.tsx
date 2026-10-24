@@ -4,8 +4,8 @@ import { router } from "./app/router/router"
 import { useAuth } from "./feature/auth"
 import { useAuthStore } from "./feature/auth"
 export default function App(){
-  const authUser = useAuthStore.getState().user;
-  const authLoading = useAuthStore.getState().loading;
+  const authUser = useAuthStore((state) => state.user);
+  const authLoading = useAuthStore((state) => state.loading);
   useEffect(() => {
   const unsubscribe = useAuth();
   return unsubscribe;

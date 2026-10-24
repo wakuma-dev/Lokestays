@@ -18,6 +18,7 @@ import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
+import { Route as ProtectedProfileRouteImport } from './routes/_protected/profile'
 import { Route as ProtectedWishlistRouteImport } from './routes/_protected/wishlist'
 
 const AuthRegisterLazyRouteImport = createFileRoute('/_auth/register')()
@@ -80,6 +81,11 @@ const MainIndexRoute = MainIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainRoute,
 } as any)
+const ProtectedProfileRoute = ProtectedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => ProtectedRoute,
+} as any)
 const ProtectedWishlistRoute = ProtectedWishlistRouteImport.update({
   id: '/wishlist',
   path: '/wishlist',
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/explore': typeof ExploreRoute
   '/login': typeof AuthLoginRoute
+  '/profile': typeof ProtectedProfileRoute
   '/wishlist': typeof ProtectedWishlistRoute
   '/register': typeof AuthRegisterLazyRoute
   '/cookie': typeof LegalCookieLazyRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/': typeof MainIndexRoute
   '/explore': typeof ExploreRoute
   '/login': typeof AuthLoginRoute
+  '/profile': typeof ProtectedProfileRoute
   '/wishlist': typeof ProtectedWishlistRoute
   '/register': typeof AuthRegisterLazyRoute
   '/cookie': typeof LegalCookieLazyRoute
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteWithChildren
   '/explore': typeof ExploreRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_protected/profile': typeof ProtectedProfileRoute
   '/_protected/wishlist': typeof ProtectedWishlistRoute
   '/_auth/register': typeof AuthRegisterLazyRoute
   '/_legal/cookie': typeof LegalCookieLazyRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/explore'
     | '/login'
+    | '/profile'
     | '/wishlist'
     | '/register'
     | '/cookie'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/'
     | '/explore'
     | '/login'
+    | '/profile'
     | '/wishlist'
     | '/register'
     | '/cookie'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/explore'
     | '/_auth/login'
+    | '/_protected/profile'
     | '/_protected/wishlist'
     | '/_auth/register'
     | '/_legal/cookie'
@@ -245,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_protected/profile': {
+      id: '/_protected/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProtectedProfileRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
     '/_protected/wishlist': {
       id: '/_protected/wishlist'
       path: '/wishlist'
@@ -292,10 +311,12 @@ const MainRouteChildren: MainRouteChildren = {
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
 
 interface ProtectedRouteChildren {
+  ProtectedProfileRoute: typeof ProtectedProfileRoute
   ProtectedWishlistRoute: typeof ProtectedWishlistRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedProfileRoute: ProtectedProfileRoute,
   ProtectedWishlistRoute: ProtectedWishlistRoute,
 }
 
