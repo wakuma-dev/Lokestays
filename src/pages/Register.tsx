@@ -78,11 +78,11 @@ function getFirebaseRegisterError(error: FirebaseError): string {
 const SLIDER_DURATION = 6000;
 const BORDER_RADIUS = 16;
 const AUTO_COMPLETE: Record<keyof RegisterDataType, string> = {
-  firstName: "given-name",
-  lastName: "family-name",
+  fullName: "name",
   email: "email",
   password: "new-password",
   confirmPassword: "new-password",
+  initialRole: "off",
   agreeTerms: "off"
 }
 export default function Register() {
@@ -94,8 +94,7 @@ export default function Register() {
   const { add } = useToast();
   const form = useForm({
     defaultValues: {
-    firstName: "",
-    lastName: "",
+    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -354,31 +353,18 @@ export default function Register() {
               void form.handleSubmit();
              }}
              className="space-y-1.5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <form.Field name="firstName">
-                  {(field) => (
-                    <MyInput 
-                     field={field}
-                     label="First name"
-                     autoComplete={AUTO_COMPLETE.firstName}
-                     placeholder="Enter your first name"
-                     />
-                  )}
-                </form.Field>
-                <form.Field name="lastName">
+              
+              <form.Field name="fullName">
                   {(field) => (
                     <MyInput 
                      field={field}
                      label="Last name"
                      placeholder="Enter your last name"
-                     autoComplete={AUTO_COMPLETE.lastName}
+                     autoComplete={AUTO_COMPLETE.fullName}
                      />
                   )}
-                </form.Field>
-
-              </div>
-
-              <form.Field name="email">
+               </form.Field>
+          <form.Field name="email">
                 {(field) => (
                   <MyInput 
                     field={field}

@@ -3,8 +3,7 @@ export type AccountMode = (typeof ACCOUNT_MODES)[number];
 
 export interface UserProfile {
     uid: string;
-    firstName: string;
-    lastName: string;
+    fullName?: string;
     email: string;
     roles: AccountMode[]
 }

@@ -1,3 +1,4 @@
+// src/feature/auth/services/auth.service.ts
 import { setDoc, getDoc, doc } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
@@ -21,37 +22,15 @@ import type {
   RegisterDataType,
 } from "@/feature/auth";
 
+import type { AccountMode, UserProfile } from "../types/auth.types";
 import { db } from "@/lib/firebase/firestore";
 
-type UserNames = Pick<RegisterDataType, "firstName" | "lastName">;
-
-type UserProfile = {
-  uid: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-};
-
-const extractUserNames = (
-  displayName: string | null,
-): Partial<UserNames> => {
-  const normalizedName = displayName?.trim();
-
-  if (!normalizedName) {
-    return {};
-  }
-
-  const nameParts = normalizedName.split(/\s+/);
-
-  return {
-    firstName: nameParts[0],
-    lastName: nameParts.slice(1).join(" "),
-  };
-};
+type UserNames = Pick<RegisterDataType, "fullName">;
 
 const syncUserProfile = async (
   user: User,
   names?: UserNames,
+  initialRole: AccountMode = "guest",
 ): Promise<void> => {
   if (!user.email) {
     throw new Error(
@@ -63,35 +42,31 @@ const syncUserProfile = async (
   const snapshot = await getDoc(userRef);
   const existingProfile = snapshot.data();
 
-  const providerNames = extractUserNames(user.displayName);
-
-  const existingFirstName =
-    typeof existingProfile?.firstName === "string"
-      ? existingProfile.firstName.trim()
+  const existingFullName =
+    typeof existingProfile?.fullName === "string"
+      ? existingProfile.fullName.trim()
       : "";
 
-  const existingLastName =
-    typeof existingProfile?.lastName === "string"
-      ? existingProfile.lastName.trim()
-      : "";
+  const requestedFullName = names?.fullName?.trim() ?? "";
+  const providerFullName = user.displayName?.trim() ?? "";
 
-  const requestedFirstName = names?.firstName?.trim() ?? "";
-  const requestedLastName = names?.lastName?.trim() ?? "";
+  const fullName =
+    existingFullName || requestedFullName || providerFullName;
 
-  const providerFirstName = providerNames.firstName ?? "";
-  const providerLastName = providerNames.lastName ?? "";
+  const existingRoles = Array.isArray(existingProfile?.roles)
+    ? (existingProfile.roles as AccountMode[])
+    : [];
 
-  const firstName =
-    existingFirstName || requestedFirstName || providerFirstName;
-
-  const lastName =
-    existingLastName || requestedLastName || providerLastName;
+  const roles =
+    existingRoles.length > 0
+      ? Array.from(new Set([...existingRoles, initialRole]))
+      : [initialRole];
 
   const profile: UserProfile = {
     uid: user.uid,
     email: user.email,
-    ...(firstName ? { firstName } : {}),
-    ...(lastName ? { lastName } : {}),
+    ...(fullName ? { fullName } : {}),
+    roles,
   };
 
   await setDoc(userRef, profile, { merge: true });
@@ -100,9 +75,8 @@ const syncUserProfile = async (
 export const signup = async (
   data: RegisterDataType,
 ): Promise<void> => {
-  const { firstName, lastName, email, password } = data;
+  const { fullName, email, password, initialRole } = data;
 
-  // Firebase authentication errors propagate to the registration UI.
   const userCredential = await createUserWithEmailAndPassword(
     auth,
     email.trim(),
@@ -110,22 +84,19 @@ export const signup = async (
   );
 
   try {
-    await syncUserProfile(userCredential.user, {
-      firstName,
-      lastName,
-    });
+    await syncUserProfile(
+      userCredential.user,
+      { fullName },
+      initialRole,
+    );
   } catch (error: unknown) {
     console.error("Failed to synchronize the user profile:", error);
-
-    // Do not hide the original Firestore error.
     throw error;
   }
 
   try {
     await signOut(auth);
   } catch (error: unknown) {
-    // Account creation and profile synchronization already succeeded.
-    // Do not report registration as failed just because sign-out failed.
     console.error("Failed to sign out after registration:", error);
   }
 };
@@ -144,20 +115,21 @@ export const login = async (
 
 export const loginWithProvider = async (
   provider: AuthProvider,
+  defaultRole: AccountMode = "guest",
 ): Promise<User> => {
   const userCredential = await signInWithPopup(auth, provider);
 
-  await syncUserProfile(userCredential.user);
+  await syncUserProfile(userCredential.user, undefined, defaultRole);
 
   return userCredential.user;
 };
 
 export const loginWithGoogle = async (): Promise<User> => {
-  return loginWithProvider(googleProvider);
+  return loginWithProvider(googleProvider, "guest");
 };
 
 export const loginWithFacebook = async (): Promise<User> => {
-  return loginWithProvider(facebookProvider);
+  return loginWithProvider(facebookProvider, "guest");
 };
 
 export const loginWithGoogleRedirect = async (): Promise<void> => {
@@ -175,7 +147,7 @@ export const handleAuthRedirectResult = async (): Promise<User | null> => {
     return null;
   }
 
-  await syncUserProfile(result.user);
+  await syncUserProfile(result.user, undefined, "guest");
 
   return result.user;
 };
