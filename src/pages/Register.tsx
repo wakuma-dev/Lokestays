@@ -1,14 +1,32 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useToast } from "@/components/ui/toast";
-import { MyInput, type RegisterDataType, MyCheckbox, registerSchema, useSignup  } from "@/feature/auth";
 import { FirebaseError } from "firebase/app";
-import { Spinner } from "@/components/ui/spinner";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { useToast } from "@/components/ui/toast";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import {
+  MyInput,
+  MyCheckbox,
+  type RegisterDataType,
+  registerSchema,
+  useSignup,
+  SocialLoginButton
+} from "@/feature/auth";
+
 import img from "../assets/image/0ad05ce9939f87dbabaf4cfa418bffcd.jpg";
 import img2 from "../assets/image/8vcd3pqDp1KisfIf62HgmbUxUQ_wyPH3sPBldtbTt2bsJOtN-d0uvdl0rZY8lEXM_KTYWvJpR96Lr2K433B_Ig1H40ItLbWfHfDyNAMoGqsrgPRkc3H-T4mrTYcBx15BBiYbx3FC_ZnFAaWbl09U3guAEW3tRzKNMXvF1QNpwa7I9aLCSVP-vFEa72mVPbAt.jpg";
 import img3 from "../assets/image/f5r5JbkkNjnS1_S9dq9iH9qHlBdF6UfNhA0RiaXh8lekGPTex0DY7bzLZFDvzglO6fu0FqrvtEJ0XVWd3-8kd_Gnhp-HcjpnK0DLcbjseS0ZDoyafJcOJToDCAlg9_NNZ8zmFA4N58cWkDydZ2FujH3spz0gAa9QLXqTmq2r1GTPkFvITmC0OWhMOmVCrg-D.jpg";
@@ -60,86 +78,119 @@ const listingItems: ListingItem[] = [
       "Explore available properties and find the right space for your next getaway.",
   },
 ];
+
 function getFirebaseRegisterError(error: FirebaseError): string {
-  switch(error.code){
+  switch (error.code) {
     case "auth/email-already-in-use":
-      return "This email is already registered";
+      return "This email is already registered. Please log in.";
+
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+
+    case "auth/weak-password":
+      return "Your password is too weak.";
+
     case "auth/network-request-failed":
-      return "Network error. please check your connection";
+      return "Network error. Please check your connection.";
+
     case "auth/operation-not-allowed":
-        return "Email registration is currently disabled";
-    case "auth/quota-exceed":
-        return "Too many requests. Please try again later"
-    default: 
-      console.error("Firebase Code Error", error.code, error.message);
-      return "Something went wrong"
+      return "Email registration is currently disabled.";
+
+    case "auth/too-many-requests":
+      return "Too many attempts. Please try again later.";
+
+    default:
+      console.error("Firebase registration error:", {
+        code: error.code,
+        message: error.message,
+      });
+
+      return "Something went wrong. Please try again.";
   }
 }
+
 const SLIDER_DURATION = 6000;
 const BORDER_RADIUS = 16;
+
 const AUTO_COMPLETE: Record<keyof RegisterDataType, string> = {
   fullName: "name",
   email: "email",
   password: "new-password",
   confirmPassword: "new-password",
   initialRole: "off",
-  agreeTerms: "off"
-}
+  createdAt: "off",
+  agreeTerms: "off",
+};
+
 export default function Register() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const navigate = useNavigate();
-  const signupMutation = useSignup();
   const [registerError, setRegisterError] = useState("");
-  const { add } = useToast();
-  const form = useForm({
-    defaultValues: {
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    agreeTerms: false
-    } as RegisterDataType,
-    validators: {
-      onBlur: registerSchema,
-      onSubmit: registerSchema
-    },
-    onSubmit: async ({value}) => {
-      try {
-       await signupMutation.mutateAsync(value);
-       add({
-        type: "success",
-        title: "Success",
-        description: "User registered successfully"
-       });
-       await navigate({
-        to: "/login",
-        replace: true
-       })
-      } catch(error){
-        add({
-          type: "error",
-          title: "Error",
-          description: "User couldn't sign up"
-        });
-        if(error instanceof FirebaseError){
-          setRegisterError(getFirebaseRegisterError(error))
-        }else{
-          setRegisterError("Something went wrong. Please try again");
-          console.error("Unexpected error is occurred", error)
-        }
-      }
-    }
-  })
+
   const [dimensions, setDimensions] = useState({
     width: 0,
     height: 0,
   });
 
+  const navigate = useNavigate();
+  const signupMutation = useSignup();
+  const { add } = useToast();
+
   const progressBorderRef = useRef<HTMLDivElement>(null);
 
   const currentItem = listingItems[currentIndex];
 
+  const form = useForm({
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      initialRole: "guest",
+      agreeTerms: false,
+    } as RegisterDataType,
+
+    validators: {
+      onBlur: registerSchema,
+      onSubmit: registerSchema,
+    },
+
+    onSubmit: async ({ value }) => {
+      setRegisterError("");
+
+      try {
+        await signupMutation.mutateAsync(value);
+
+        add({
+          type: "success",
+          title: "Success",
+          description: "User registered successfully.",
+        });
+
+        await navigate({
+          to: "/login",
+          replace: true,
+        });
+      } catch (error: unknown) {
+        console.error("Registration failed:", error);
+
+        const message =
+          error instanceof FirebaseError
+            ? getFirebaseRegisterError(error)
+            : "Something went wrong. Please try again.";
+
+        setRegisterError(message);
+
+        add({
+          type: "error",
+          title: "Registration failed",
+          description: message,
+        });
+      }
+    },
+  });
+
+  // Observe the carousel container dimensions.
   useEffect(() => {
     const element = progressBorderRef.current;
 
@@ -159,12 +210,14 @@ export default function Register() {
     return () => observer.disconnect();
   }, []);
 
+  // Automatically advance the carousel.
   useEffect(() => {
     if (isPaused) return;
 
     const timerId = window.setTimeout(() => {
       setCurrentIndex(
-        (previousIndex) => (previousIndex + 1) % listingItems.length,
+        (previousIndex) =>
+          (previousIndex + 1) % listingItems.length,
       );
     }, SLIDER_DURATION);
 
@@ -173,14 +226,16 @@ export default function Register() {
 
   const handleNext = (): void => {
     setCurrentIndex(
-      (previousIndex) => (previousIndex + 1) % listingItems.length,
+      (previousIndex) =>
+        (previousIndex + 1) % listingItems.length,
     );
   };
 
   const handleBack = (): void => {
     setCurrentIndex(
       (previousIndex) =>
-        (previousIndex - 1 + listingItems.length) % listingItems.length,
+        (previousIndex - 1 + listingItems.length) %
+        listingItems.length,
     );
   };
 
@@ -217,7 +272,7 @@ export default function Register() {
 
       <div
         className="mx-auto w-full max-w-6xl bg-[#fff] md:p-4 overflow-hidden
-         grid grid-cols-1 lg:grid-cols-2 
+          grid grid-cols-1 lg:grid-cols-2
           h-auto lg:h-screen rounded-3xl"
       >
         <section
@@ -328,119 +383,153 @@ export default function Register() {
             </div>
           </div>
         </section>
+
         <section className="flex flex-col justify-start md:items-center md:justify-center">
-          <Card size="default"
-                aria-labelledby="signup-account"
-                className="w-full max-w-md flex flex-col gap-4">
-            <CardHeader className="flex flex-col items-center justify-center lg:items-start">
-              <CardTitle id="signup-account" 
-                className="font-serif text-center lg:text-left text-[24px] 
+          <Card
+            size="default"
+            aria-labelledby="signup-account"
+            className="w-full max-w-md flex flex-col gap-4"
+          >
+            <CardHeader className="flex flex-col items-center
+             justify-center lg:items-start">
+              <CardTitle
+                id="signup-account"
+                className="font-serif text-center lg:text-left text-[24px]
                 lg:text-[40px] leading-[32px] text-black lg:leading-[44px]
-                 font-semibold tracking-tight">Create your account</CardTitle>
-              <CardDescription 
-               className="text-[#222222] text-center 
-               text-[13px] leading-[17px] font-medium md:text-[15px] md:leading-[20px] lg:text-left">
-               Join Lokestays to discover comfortable places to stay, save your favorites, and make your next stay feel like home
+                font-semibold tracking-tight"
+              >
+                Create your account
+              </CardTitle>
+
+              <CardDescription
+                className="text-[#222222] text-center
+                text-[13px] leading-[17px] font-medium md:text-[15px] md:leading-[20px] lg:text-left"
+              >
+                Join Lokestays to discover comfortable places to stay,
+                save your favorites, and make your next stay feel like home
               </CardDescription>
             </CardHeader>
-           <CardContent>
-            <form 
-             id="register-form"
-             noValidate
-             onSubmit={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              void form.handleSubmit();
-             }}
-             className="space-y-1.5">
-              
-              <form.Field name="fullName">
+
+            <CardContent>
+              <form
+                id="register-form"
+                noValidate
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  void form.handleSubmit();
+                }}
+                className="space-y-1.5"
+              >
+                <form.Field name="fullName">
                   {(field) => (
-                    <MyInput 
-                     field={field}
-                     label="Last name"
-                     placeholder="Enter your last name"
-                     autoComplete={AUTO_COMPLETE.fullName}
-                     />
-                  )}
-               </form.Field>
-          <form.Field name="email">
-                {(field) => (
-                  <MyInput 
-                    field={field}
-                    type="email"
-                    placeholder="Enter your email address"
-                    label="Email"
-                    autoComplete={AUTO_COMPLETE.email}
+                    <MyInput
+                      field={field}
+                      label="Full name"
+                      placeholder="Enter your full name"
+                      autoComplete={AUTO_COMPLETE.fullName}
                     />
-                )}
-              </form.Field>
-              <form.Field name="password">
-                {(field) => (
-                  <MyInput 
-                   field={field}
-                   placeholder="Enter your password"
-                   label="Password"
-                   isPasswordField
-                   autoComplete={AUTO_COMPLETE.password}
-                   />
-                )}
-              </form.Field>
-              <form.Field name="confirmPassword">
-                {(field) => (
-                  <MyInput 
-                   field={field}
-                   placeholder="Enter your confirm password"
-                   isPasswordField
-                   autoComplete={AUTO_COMPLETE.confirmPassword}
-                   label="Confirm password"
-                   />
-                )}
-              </form.Field>
-              <form.Field name="agreeTerms">
-                {(field) => (
-                  <MyCheckbox 
-                   field={field}
-                   />
-                )}
-              </form.Field>
-              {registerError && (
-                <p role="alert"
+                  )}
+                </form.Field>
+
+                <form.Field name="email">
+                  {(field) => (
+                    <MyInput
+                      field={field}
+                      type="email"
+                      placeholder="Enter your email address"
+                      label="Email"
+                      autoComplete={AUTO_COMPLETE.email}
+                    />
+                  )}
+                </form.Field>
+
+                <form.Field name="password">
+                  {(field) => (
+                    <MyInput
+                      field={field}
+                      placeholder="Enter your password"
+                      label="Password"
+                      isPasswordField
+                      autoComplete={AUTO_COMPLETE.password}
+                    />
+                  )}
+                </form.Field>
+
+                <form.Field name="confirmPassword">
+                  {(field) => (
+                    <MyInput
+                      field={field}
+                      placeholder="Enter your confirm password"
+                      isPasswordField
+                      autoComplete={AUTO_COMPLETE.confirmPassword}
+                      label="Confirm password"
+                    />
+                  )}
+                </form.Field>
+
+                <form.Field name="agreeTerms">
+                  {(field) => (
+                    <MyCheckbox field={field} />
+                  )}
+                </form.Field>
+
+                {registerError && (
+                  <p
+                    role="alert"
                     aria-live="assertive"
-                    className="text-red-400 text-xs">
-                      {registerError}
-                </p>
-              )}
-             </form>
-           </CardContent>
-           <CardFooter className="flex flex-col gap-1.5">
-            <form.Subscribe
-             selector={(state) => 
-              [state.canSubmit, state.isSubmitting, state.isValidating] as const}>
-              {([canSubmit, isSubmitting, isValidating]) => (
-                <Button 
-                 type="submit"
-                 form="register-form"
-                 variant="default"
-                 disabled={!canSubmit || isSubmitting || isValidating || signupMutation.isPending}
-                 className="w-full bg-[#0f766e] font-sans font-semibold cursor-pointer 
-                 tracking-normal text-[15px] leading-[20px]">
-                 {isSubmitting ? <Spinner /> : "Create account" }
-                 </Button>
-              )}
-            </form.Subscribe>  
-             <span aria-label="Already account"
-                                 className="text-[13px] text-[#222222] font-normal tracking-normal leading-[17px]">
-                            Already have an account?<Link to="/login"
-                             className="ml-1.5 font-semibold
-                              text-[#0f766e]">Log in</Link>
-                           </span>
-           </CardFooter>
+                    className="text-red-400 text-xs"
+                  >
+                    {registerError}
+                  </p>
+                )}
+              </form>
+            </CardContent>
+
+            <CardFooter className="flex flex-col gap-1.5">
+              <form.Subscribe
+                selector={(state) => [
+                  state.isSubmitting,
+                  state.isValidating,
+                ] as const}
+              >
+                {([isSubmitting, isValidating]) => (
+                  <Button
+                    type="submit"
+                    form="register-form"
+                    variant="default"
+                    disabled={
+                      isSubmitting ||
+                      isValidating ||
+                      signupMutation.isPending
+                    }
+                    className="w-full bg-[#0f766e] font-sans font-semibold cursor-pointer
+                    tracking-normal text-[15px] leading-[20px]"
+                  >
+                    {isSubmitting || signupMutation.isPending
+                      ? <Spinner />
+                      : "Create account"}
+                  </Button>
+                )}
+              </form.Subscribe>
+
+              <span
+                aria-label="Already account"
+                className="text-[13px] text-[#222222] font-normal tracking-normal leading-[17px]"
+              >
+                Already have an account?
+                <Link
+                  to="/login"
+                  className="ml-1.5 font-semibold text-[#0f766e]"
+                >
+                  Log in
+                </Link>
+              </span>
+            </CardFooter>
+            <SocialLoginButton />
           </Card>
         </section>
       </div>
     </main>
   );
 }
-
-
