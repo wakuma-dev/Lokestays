@@ -214,7 +214,7 @@ export default function Login() {
             />
     </Helmet>
     <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 h-auto w-full
-     overflow-hidden bg-white rounded-3xl p-4 h-screen">
+     overflow-hidden bg-white rounded-3xl md:p-4 min-h-[calc(100vh-2rem)] lg:h-screen">
       <section 
         aria-label="Discover places to stay"
         aria-roledescription="carousel"
@@ -298,13 +298,16 @@ export default function Login() {
               </div>
         </section>
         <section className="flex flex-col items-center justify-center">
-        <Card aria-labelledby="login-account" className="w-full max-w-md flex flex-col gap-4">
-          <CardHeader className="flex flex-col items-center justify-center lg:items-start">
-            <CardTitle id="login-account" className="text-center lg:text-left font-serif 
-            text-[24px] lg:text-[40px] leading-[32px] lg:leading-[44px] 
-            font-semibold tracking-tight">Welcome back!</CardTitle>
-            <CardDescription className="text-center lg:text-left
-             tracking-normal text-[13px] leading-[17px] md:text-[15px] md:leading-[20px] text-[#222222] font-sans font-medium">Sign in to your Lokestays account to discover comfortable stays and manage your bookings.</CardDescription>
+        <Card
+          aria-labelledby="login-account"
+          className="w-full max-w-md flex flex-col gap-6 [--card-spacing:0px]"
+        >
+          <CardHeader className="flex flex-col items-center text-center justify-center gap-4">
+            <CardTitle id="login-account" className="text-center font-serif 
+            text-[32px] lg:text-[40px] leading-[34px] lg:leading-[44px] 
+            font-medium tracking-normal">Find your place again.</CardTitle>
+            <CardDescription className="text-center text-[#6c6c6c] 
+             tracking-normal text-[14px] leading-[16px] md:text-[15px] md:leading-[20px]  font-sans font-medium">Sign in to your Lokestays account to discover comfortable stays and manage your bookings.</CardDescription>
           </CardHeader>
           <CardContent>
             <form
@@ -315,13 +318,12 @@ export default function Login() {
               event.stopPropagation();
               void form.handleSubmit();
               
-             }} className="space-y-1.5">
+             }} className="flex flex-col space-y-2.5">
              <form.Field name="email">
               {(field) => (
                 <MyInput 
                  field={field}
                  type="email"
-                 label="Email"
                  placeholder="Enter your email address"
                  autoComplete={AUTO_COMPLETE.email}
                  />
@@ -331,7 +333,6 @@ export default function Login() {
               {(field) => (
                 <MyInput
                  field={field}
-                 label="Password"
                  placeholder="Enter your password"
                  isPasswordField
                  autoComplete={AUTO_COMPLETE.password}
@@ -348,7 +349,7 @@ export default function Login() {
             )}
              </form>
           </CardContent>
-          <CardFooter className="flex flex-col gap-1.5">
+          <CardFooter className="flex flex-col -mt-1 gap-1.5">
             <form.Subscribe 
              selector={(state) => 
               [state.isSubmitting, state.isValidating] as const}>
@@ -358,7 +359,7 @@ export default function Login() {
                   form="login-form"
                   type="submit"
                   disabled={isSubmitting || isValidating || loginMutation.isPending}
-                  className="w-full bg-[#0f766e] font-semibold font-sans 
+                  className="w-full h-11 bg-[#0f766e] font-semibold font-sans 
                   tracking-normal cursor-pointer text-[15px] leading-[20px]">
                     {isSubmitting ? <Spinner /> : "Log in"}
                   </Button>

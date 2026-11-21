@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useGoogleLogin } from "../hooks/useGoogleLogin";
-import { Spinner } from "@/components/ui/spinner";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "@tanstack/react-router";
 interface GoogleLoginButtonProps {
@@ -27,27 +26,19 @@ export function GoogleLoginButton({redirect}: GoogleLoginButtonProps) {
         });
     };
     return (
-        <>
+        <div className="flex flex-col items-center">
             <Button 
                 variant="outline"
                 onClick={() => handleLogin()}
                 disabled={isPending}
-                className="cursor-pointer"
-            >
-                {isPending ? (
-                    <Spinner />
-                ) : (
-                    <>
-                        <FcGoogle className="h-5 w-5 mr-2" />
-                        Continue with Google
-                    </>
-                )}
+                className="cursor-pointer w-fit h-12 w-12"
+            > <FcGoogle size={32} />
             </Button>
             {error && (
                 <p role="alert" className="text-sm text-destructive mt-2">
                     {error.message}
                 </p>
             )}
-        </>
+        </div>
     );
 }

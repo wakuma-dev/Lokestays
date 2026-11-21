@@ -1,11 +1,9 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { FirebaseError } from "firebase/app";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/toast";
@@ -17,7 +15,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import {
   MyInput,
   MyCheckbox,
@@ -26,7 +23,6 @@ import {
   useSignup,
   SocialLoginButton
 } from "@/feature/auth";
-
 import img from "../assets/image/0ad05ce9939f87dbabaf4cfa418bffcd.jpg";
 import img2 from "../assets/image/8vcd3pqDp1KisfIf62HgmbUxUQ_wyPH3sPBldtbTt2bsJOtN-d0uvdl0rZY8lEXM_KTYWvJpR96Lr2K433B_Ig1H40ItLbWfHfDyNAMoGqsrgPRkc3H-T4mrTYcBx15BBiYbx3FC_ZnFAaWbl09U3guAEW3tRzKNMXvF1QNpwa7I9aLCSVP-vFEa72mVPbAt.jpg";
 import img3 from "../assets/image/f5r5JbkkNjnS1_S9dq9iH9qHlBdF6UfNhA0RiaXh8lekGPTex0DY7bzLZFDvzglO6fu0FqrvtEJ0XVWd3-8kd_Gnhp-HcjpnK0DLcbjseS0ZDoyafJcOJToDCAlg9_NNZ8zmFA4N58cWkDydZ2FujH3spz0gAa9QLXqTmq2r1GTPkFvITmC0OWhMOmVCrg-D.jpg";
@@ -273,7 +269,7 @@ export default function Register() {
       <div
         className="mx-auto w-full max-w-6xl bg-[#fff] md:p-4 overflow-hidden
           grid grid-cols-1 lg:grid-cols-2
-          h-auto lg:h-screen rounded-3xl"
+          min-h-[calc(100vh-2rem)] h-auto lg:h-screen rounded-3xl"
       >
         <section
           aria-label="Discover places to stay"
@@ -384,26 +380,26 @@ export default function Register() {
           </div>
         </section>
 
-        <section className="flex flex-col justify-start md:items-center md:justify-center">
+        <section className="flex flex-col justify-center md:items-center">
           <Card
             size="default"
             aria-labelledby="signup-account"
-            className="w-full max-w-md flex flex-col gap-4"
+            className="w-full max-w-md flex flex-col gap-6 [--card-spacing:0px]"
           >
-            <CardHeader className="flex flex-col items-center
-             justify-center lg:items-start">
+            <CardHeader className="flex flex-col items-center text-center
+             justify-center gap-4">
               <CardTitle
                 id="signup-account"
-                className="font-serif text-center lg:text-left text-[24px]
-                lg:text-[40px] leading-[32px] text-black lg:leading-[44px]
-                font-semibold tracking-tight"
+                className="font-serif text-[32px]
+                lg:text-[40px] leading-[34x] text-black lg:leading-[44px]
+                font-medium tracking-normal"
               >
                 Create your account
               </CardTitle>
 
               <CardDescription
-                className="text-[#222222] text-center
-                text-[13px] leading-[17px] font-medium md:text-[15px] md:leading-[20px] lg:text-left"
+                className="text-[#6c6c6c] 
+                text-[14px] leading-[16px] font-medium md:text-[15px] md:leading-[20px]"
               >
                 Join Lokestays to discover comfortable places to stay,
                 save your favorites, and make your next stay feel like home
@@ -419,14 +415,13 @@ export default function Register() {
                   event.stopPropagation();
                   void form.handleSubmit();
                 }}
-                className="space-y-1.5"
+                className="flex flex-col space-y-2.5"
               >
                 <form.Field name="fullName">
                   {(field) => (
                     <MyInput
                       field={field}
-                      label="Full name"
-                      placeholder="Enter your full name"
+                      placeholder="Full name"
                       autoComplete={AUTO_COMPLETE.fullName}
                     />
                   )}
@@ -437,19 +432,17 @@ export default function Register() {
                     <MyInput
                       field={field}
                       type="email"
-                      placeholder="Enter your email address"
-                      label="Email"
+                      placeholder="Email address"
                       autoComplete={AUTO_COMPLETE.email}
                     />
                   )}
                 </form.Field>
-
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <form.Field name="password">
                   {(field) => (
                     <MyInput
                       field={field}
-                      placeholder="Enter your password"
-                      label="Password"
+                      placeholder="Password"
                       isPasswordField
                       autoComplete={AUTO_COMPLETE.password}
                     />
@@ -460,14 +453,13 @@ export default function Register() {
                   {(field) => (
                     <MyInput
                       field={field}
-                      placeholder="Enter your confirm password"
+                      placeholder="Confirm password"
                       isPasswordField
                       autoComplete={AUTO_COMPLETE.confirmPassword}
-                      label="Confirm password"
-                    />
+                     />
                   )}
                 </form.Field>
-
+                </div>
                 <form.Field name="agreeTerms">
                   {(field) => (
                     <MyCheckbox field={field} />
@@ -486,7 +478,7 @@ export default function Register() {
               </form>
             </CardContent>
 
-            <CardFooter className="flex flex-col gap-1.5">
+            <CardFooter className="flex flex-col -mt-1 gap-1.5">
               <form.Subscribe
                 selector={(state) => [
                   state.isSubmitting,
@@ -503,7 +495,7 @@ export default function Register() {
                       isValidating ||
                       signupMutation.isPending
                     }
-                    className="w-full bg-[#0f766e] font-sans font-semibold cursor-pointer
+                    className="w-full h-11 bg-[#0f766e] font-sans font-semibold cursor-pointer
                     tracking-normal text-[15px] leading-[20px]"
                   >
                     {isSubmitting || signupMutation.isPending
@@ -520,8 +512,7 @@ export default function Register() {
                 Already have an account?
                 <Link
                   to="/login"
-                  className="ml-1.5 font-semibold text-[#0f766e]"
-                >
+                  className="ml-1.5 font-semibold text-[#0f766e]">
                   Log in
                 </Link>
               </span>
