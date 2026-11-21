@@ -1,68 +1,47 @@
 import { updateDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/firestore";
-import { 
-  userSchema, 
-  updateUserSchema, 
-  type UserProfile, 
-  type UpdateUserProfile 
-} from "@/feature/profile";
-
-export const getUserProfile = async (uid: string): Promise<UserProfile> => {
-  const normalizedUid = uid.trim();
-  if (!normalizedUid) {
-    throw new Error("User Id is required");
-  }
-
-  const userRef = doc(db, "users", normalizedUid);
-  const snapshot = await getDoc(userRef);
-  
-  if (!snapshot.exists()) {
-    throw new Error("User Profile not found");
-  }
-
-  const data: unknown = snapshot.data();
-  if (typeof data !== "object" || data === null) {
-    throw new Error("Invalid user profile data");
-  }
-
-  const profileResult = userSchema.safeParse({
-    ...data,
-    uid: normalizedUid,
-    phoneNumber:
-      "phoneNumber" in data && typeof data.phoneNumber === "string"
-        ? data.phoneNumber
-        : "",
-  });
-
-  if (!profileResult.success) {
-    console.error(
-      "Invalid user profile:",
-      profileResult.error.flatten(),
-    );
-
-    throw new Error(
-      "Your profile data is incomplete or invalid. Please contact support.",
-    );
-  }
-
-  return profileResult.data;
-};
-
-export const updateUserProfile = async (uid: string, data: UpdateUserProfile): Promise<void> => {
-  const normalizedUid = uid.trim();
-  if (!normalizedUid) {
-    throw new Error("User Id is required");
-  }
-
-  const validatedData = updateUserSchema.parse(data);
-  const userRef = doc(db, "users", normalizedUid);
-  const snapshot = await getDoc(userRef);
-  if (!snapshot.exists()) {
-    throw new Error("User Profile not found");
-  }
-
-  await updateDoc(userRef, {
-    ...validatedData,
-   updatedAt: serverTimestamp()
-  });
-};
+import { profileSchema, updateProfileSchema } from "@/feature/profile/schema/profileSchema"
+import type { Profile, ProfileUpdate } from "@/feature/profile/types/profile.types";
+export async function getUserProfile(uid: string): Promise<Profile>{
+     if(!uid.trim()){
+        throw new Error("A valid uid is required to fetch the profile")
+     }
+     const userRef = doc(db, "users", uid);
+     const snapshot = await getDoc(userRef);
+     if(!snapshot.exists()){
+      throw new Error("Admin not found");
+     }
+     const profileData = profileSchema.safeParse({
+        uid: snapshot.id,
+        ...snapshot.data()
+     } as Profile);
+     if(!profileData.success){
+        throw new Error("Admin profile contains invalid data.");
+     }
+     return profileData.data
+}
+export async function userUpdateProfile(uid: string, profileData: ProfileUpdate): Promise<void>{
+    if(!uid.trim()){
+        throw new Error("A valid uid is required to update the profile");
+    }
+    const validatedData = updateProfileSchema.safeParse(profileData);
+    if(!validatedData.success){
+        throw new Error("Invalid profile data provided for update.");
+    }
+    const userRef = doc(db, "users", uid);
+    const snapshot = await getDoc(userRef);
+    if(!snapshot.exists()){
+        throw new Error("Admin profile not found for update");
+    }
+    const existingData = profileSchema.safeParse({
+        uid: snapshot.id,
+        ...snapshot.data()
+    } as Profile);
+    if(!existingData.success){
+     throw new Error("Existing admin profile contains invalid data.")
+    }
+    await updateDoc(userRef, {
+        ...validatedData.data,
+        updatedAt: serverTimestamp()
+    });
+}

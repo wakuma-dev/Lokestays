@@ -1,33 +1,26 @@
 import { z } from "zod";
-export const userSchema = z.object({
-  uid: z.string().trim().min(1, {
-    error: "UID is required",
-  }),
-  firstName: z.string().trim().min(1, {
-    error: "First name is required",
-  }),
-  lastName: z.string().trim().min(1, {
-    error: "Last name is required",
-  }),
-  email: z.email({
-    error: "Invalid email address",
-  }),
-  phoneNumber: z
+const MAX_NAME_LENGTH = 100;
+const MAX_EMAIL_LENGTH = 255;
+export const profileSchema = z.object({
+  uid: z.string().min(1, { message: "UID is required" }),
+  fullName: z
     .string()
-    .trim()
-    .regex(/^\+[1-9]\d{1,14}$/, {
-      error: "Invalid phone number format",
-    })
-    .or(z.literal("")),
+    .min(1, { message: "Full name is required" })
+    .max(MAX_NAME_LENGTH, { message: `Full name cannot exceed ${MAX_NAME_LENGTH} characters` })
+    .trim(),
+  email: z
+    .string()
+    .email({ message: "Invalid email address format" })
+    .max(MAX_EMAIL_LENGTH, { message: `Email cannot exceed ${MAX_EMAIL_LENGTH} characters` })
+    .toLowerCase()
+    .trim(),
 });
 
-export const updateUserSchema = userSchema
+export const updateProfileSchema = profileSchema
   .pick({
-    firstName: true,
-    lastName: true,
-    phoneNumber: true,
+    fullName: true,
+    email: true,
   })
-  .partial()
-  .refine((data) => Object.keys(data).length > 0, {
-    error: "Provide at least one field to update",
-  });
+  .partial();
+
+
