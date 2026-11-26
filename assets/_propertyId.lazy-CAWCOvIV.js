@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-Cx0BB4qO.js";import{n as t}from"./fileRoute-BMa9kF6E.js";import{t as n}from"./index.esm-BuH1kUyt.js";var r=e();function i(){return(0,r.jsx)(`main`,{className:``,children:(0,r.jsx)(n,{children:`abebe`})})}var a=t(`/_main/properties/$propertyId`)({component:i});export{a as Route};
