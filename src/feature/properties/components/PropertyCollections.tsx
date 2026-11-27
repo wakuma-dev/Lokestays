@@ -1,9 +1,6 @@
-import { useMemo, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo } from "react";
 import type { Properties } from "../schema/propertiesSchema";
-
-import PropertyHeader from "./PropertyHeader";
-import PropertyCard from "./PropertyCard";
+import PropertyCollectionSection from "./PropertyCollectionSection";
 
 interface PropertyCollection {
   id: string;
@@ -42,108 +39,46 @@ export default function PropertyCollections({
     }
 
     const result: PropertyCollection[] = [];
+    let otherCityIndex = 0;
 
     for (const [key, cityProperties] of cityGroups) {
       const city = cityProperties[0]?.location?.city;
 
       if (!city) continue;
 
+      const isAddisKetema = key === "addis ketema";
+      const usePopularHomesTitle =
+        isAddisKetema || otherCityIndex % 2 === 1;
+      const titlePrefix = usePopularHomesTitle
+        ? "Popular homes in"
+        : "Stay in";
+
       result.push({
         id: `city-${key}`,
-        title: `Stay in ${city}`,
+        title: `${titlePrefix} ${city}`,
         city,
         neighborhood: null,
         properties: cityProperties,
       });
+
+      if (!isAddisKetema) otherCityIndex += 1;
     }
 
     return result;
   }, [properties]);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-3">
       {collections.map((collection) => (
         <PropertyCollectionSection
           key={collection.id}
-          collection={collection}
+          title={collection.title}
+          city={collection.city}
+          neighborhood={collection.neighborhood}
+          properties={collection.properties}
           onSelectProperty={onSelectProperty}
         />
       ))}
     </div>
-  );
-}
-
-interface PropertyCollectionSectionProps {
-  collection: PropertyCollection;
-  onSelectProperty: (propertyId: string) => void;
-}
-
-function PropertyCollectionSection({
-  collection,
-  onSelectProperty,
-}: PropertyCollectionSectionProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (direction: "left" | "right") => {
-    const container = scrollContainerRef.current;
-
-    if (!container) return;
-
-    container.scrollBy({
-      left:
-        direction === "right"
-          ? container.clientWidth * 0.8
-          : -container.clientWidth * 0.8,
-      behavior: "smooth",
-    });
-  };
-
-  return (
-    <section className="space-y-2">
-      <div className="flex items-center justify-between">
-        <PropertyHeader
-          title={collection.title}
-          city={collection.city}
-          neighborhood={collection.neighborhood ?? undefined}
-        />
-
-        <div className="hidden lg:flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={() => scroll("left")}
-            aria-label="Scroll properties left"
-            className="rounded-full border border-border p-2 hover:bg-muted"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => scroll("right")}
-            aria-label="Scroll properties right"
-            className="rounded-full border border-border p-2 hover:bg-muted"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-
-      <div
-        ref={scrollContainerRef}
-        className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-3 scrollbar-hide"
-      >
-        {collection.properties.map((property) => (
-          <div
-            key={property.id}
-            className="w-48 shrink-0 snap-start"
-          >
-            <PropertyCard
-              property={property}
-              onSelect={onSelectProperty}
-            />
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }

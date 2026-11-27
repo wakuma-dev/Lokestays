@@ -16,7 +16,6 @@ const currencyFormatter = new Intl.NumberFormat("en-ET", {
   currency: "ETB",
   maximumFractionDigits: 0,
 });
-
 export default function PropertyCard({
   property,
   onSelect,
@@ -97,7 +96,7 @@ export default function PropertyCard({
             )}
           </AspectRatio>
         </Link>
-      <div className="absolute inset-x-3 top-3 z-10 flex items-center justify-between">
+      <div className="absolute inset-x-2 top-2 z-10 flex items-center justify-between">
         <Badge
           variant="secondary"
           className="h-auto px-2 py-1 text-[12px] font-semibold leading-[16px] pointer-events-none"
@@ -115,14 +114,14 @@ export default function PropertyCard({
               : "Add to favorites"
           }
           aria-pressed={isFavorite}
-          className="border-0 bg-transparent p-0 hover:bg-transparent"
+          className="border-0 cursor-pointer bg-transparent p-0 hover:bg-transparent"
         >
           <Heart
             strokeWidth={1}
-            className={`size-8 ${isFavorite
-              ? "fill-red-500 text-white"
-              : "fill-[#606163] text-white"
-            }`}
+            className={`cursor-pointer size-7 ${isFavorite
+              ? "fill-[#ff385c] text-[#ff385c]"
+              : "fill-black/35 text-white"
+           }`}
           />
         </Button>
       </div>

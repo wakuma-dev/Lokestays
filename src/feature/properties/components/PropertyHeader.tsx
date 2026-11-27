@@ -25,7 +25,7 @@ export default function PropertyHeader({title, city, neighborhood}: PropertyHead
           type="button"
           variant="outline"
           onClick={handleShowAll}
-          className="size-8 shrink-0 cursor-pointer rounded-full bg-[#EBEBEB] border-none ring-0 flex items-center justify-center">
+          className="size-7 shrink-0 cursor-pointer rounded-full bg-[#EBEBEB] border-none ring-0 flex items-center justify-center">
             <ArrowRight className="h-4 w-4" />
           </Button>
           </div>

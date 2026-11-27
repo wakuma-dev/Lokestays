@@ -1,9 +1,9 @@
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
 import type { Properties } from "../schema/propertiesSchema";
 import PropertyCard from "./PropertyCard";
-
+import { Button } from "@/components/ui/button";
+import PropertyHeader from "./PropertyHeader";
 interface PropertyCollectionSectionProps {
   title: string;
   city: string;
@@ -11,7 +11,6 @@ interface PropertyCollectionSectionProps {
   properties: Properties[];
   onSelectProperty: (propertyId: string) => void;
 }
-
 export default function PropertyCollectionSection({
   title,
   city,
@@ -20,7 +19,6 @@ export default function PropertyCollectionSection({
   onSelectProperty,
 }: PropertyCollectionSectionProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
   const scrollCarousel = (direction: "left" | "right") => {
     const carousel = carouselRef.current;
@@ -36,64 +34,50 @@ export default function PropertyCollectionSection({
     });
   };
 
-  const handleShowAll = () => {
-    navigate({
-      to: "/properties",
-      search: {
-        city,
-        ...(neighborhood ? { neighborhood } : {}),
-      },
-    });
-  };
-
   if (properties.length === 0) return null;
 
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-semibold">{title}</h2>
-        </div>
+    <section className="space-y-2">
+      <div className="flex items-center justify-between">
+        <PropertyHeader
+          title={title}
+          city={city}
+          neighborhood={neighborhood ?? undefined}
+        />
 
-        <div className="flex items-center gap-3">
-          <button
+        <div className="hidden shrink-0 items-center gap-2 lg:flex">
+          <Button
             type="button"
-            onClick={handleShowAll}
-            className="text-sm font-medium underline underline-offset-4"
+            variant="outline"
+            size="icon-xs"
+            onClick={() => scrollCarousel("left")}
+            aria-label="Scroll properties left"
+            className="size-7 cursor-pointer rounded-full border border-border bg-[#ebebeb] transition hover:bg-muted"
           >
-            Show all
-          </button>
+            <ChevronLeft className="size-4" />
+          </Button>
 
-          <div className="hidden items-center gap-2 sm:flex">
-            <button
-              type="button"
-              onClick={() => scrollCarousel("left")}
-              aria-label="Scroll properties left"
-              className="rounded-full border p-2 transition hover:bg-muted"
-            >
-              <ChevronLeft className="size-4" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => scrollCarousel("right")}
-              aria-label="Scroll properties right"
-              className="rounded-full border p-2 transition hover:bg-muted"
-            >
-              <ChevronRight className="size-4" />
-            </button>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-xs"
+            onClick={() => scrollCarousel("right")}
+            aria-label="Scroll properties right"
+            className="size-7 cursor-pointer rounded-full border border-border bg-[#ebebeb] transition hover:bg-muted"
+          >
+            <ChevronRight className="size-4" />
+          </Button>
         </div>
       </div>
 
       <div
         ref={carouselRef}
-        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {properties.map((property) => (
           <div
             key={property.id}
-            className="w-[260px] shrink-0 snap-start sm:w-[280px] lg:w-[300px]"
+            className="w-[calc(50%_-_0.375rem)] shrink-0 snap-start sm:w-48"
           >
             <PropertyCard
               property={property}

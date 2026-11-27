@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { PropertyCollections, usePropertiesQuery } from "@/feature/properties";
+import { PropertyCollections, usePropertiesQuery, PropertySkeleton } from "@/feature/properties";
 export default function HomePage() {
   const {
     data,
@@ -25,9 +25,7 @@ export default function HomePage() {
       </Helmet>
 
       {isPending && (
-        <div className="py-16 text-center text-muted-foreground">
-          Loading properties...
-        </div>
+        <PropertySkeleton />
       )}
 
       {isError && (
@@ -58,7 +56,7 @@ export default function HomePage() {
           />
 
           {hasNextPage && (
-            <div className="mt-10 flex justify-center">
+            <div className="mt-10  flex justify-center">
               <button
                 type="button"
                 onClick={() => void fetchNextPage()}

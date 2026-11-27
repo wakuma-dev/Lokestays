@@ -25,7 +25,7 @@ const propertyLocationSchema = z.object({
   longitude: z.number().min(-180, "Longitude must be >= -180").max(180, "Longitude must be <= 180"),
   address: z.string().min(5, "Address must be at least 5 characters"),
   city: z.string().min(2, "City is required"),
-  neighborhood: z.string().min(2, "Neighborhood is required")
+  neighborhood: z.string().nullable().optional()
 });
 export const propertiesSchema = z.object({
   id: z.string().min(1, "Property ID is required"),
