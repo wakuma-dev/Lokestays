@@ -1,0 +1,8 @@
+import{t as e}from"./jsx-runtime-Cx0BB4qO.js";import{b as t,x as n}from"./explore-LXgnZjFC.js";import{R as r,U as i}from"./button-GHCOnPHE.js";import{t as a}from"./heart-D2geNY8c.js";var o={name:`circle-user`,size:24,node:[[`circle`,{cx:`12`,cy:`12`,r:`10`,key:`1mglay`}],[`circle`,{cx:`12`,cy:`10`,r:`3`,key:`ilqhr7`}],[`path`,{d:`M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662`,key:`154egf`}]],aliases:[`user-circle`]};o.node;var s=r(o),c=e(),l=[{icon:n,label:`Home`,path:`/`},{icon:t,label:`Explore`,path:`/explore`},{icon:a,label:`Wishlists`,path:`/wishlist`},{icon:s,label:`Profile`,path:`/profile`}];function u(){return(0,c.jsx)(`nav`,{"aria-label":`Main navigation`,className:`fixed inset-x-0 bottom-0 z-50 border-t border-gray-200\r
+                 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md\r
+                 md:hidden`,children:(0,c.jsx)(`ul`,{className:`mx-auto flex w-full max-w-screen-sm items-stretch`,children:l.map(e=>{let t=e.icon;return(0,c.jsx)(`li`,{className:`flex min-w-0 flex-1`,children:(0,c.jsxs)(i,{to:e.path,activeOptions:{exact:e.path===`/`},activeProps:{className:`text-[#0f766e]`,"aria-current":`page`},inactiveProps:{className:`text-[#222222]`},className:`flex min-h-16 w-full flex-col items-center\r
+                           justify-center gap-1 px-1 py-2\r
+                           transition-colors duration-200\r
+                           focus-visible:z-10 focus-visible:outline-2\r
+                           focus-visible:outline-offset-[-3px]\r
+                           focus-visible:outline-[#145A6B]`,children:[(0,c.jsx)(t,{size:22,strokeWidth:1.8,"aria-hidden":`true`}),(0,c.jsx)(`span`,{className:`truncate text-xs font-medium leading-4`,children:e.label})]})},e.path)})})})}export{u as t};
