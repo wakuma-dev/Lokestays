@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-Cx0BB4qO.js";import{N as t,P as n}from"./explore-LXgnZjFC.js";import{L as r}from"./button-GHCOnPHE.js";function i(e,r){return t(e,n,r)}var a=e();function o({className:e,...t}){return(0,a.jsx)(`div`,{"data-slot":`skeleton`,className:r(`animate-pulse rounded-md bg-muted`,e),...t})}export{i as n,o as t};
