@@ -1,10 +1,16 @@
 import type { Properties } from "../schema/propertiesSchema";
-
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Badge } from "@/components/ui/badge";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useAuthStore } from "@/feature/auth";
+import { Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 interface PropertyCardProps {
   property: Properties;
   onSelect?: (propertyId: string) => void;
+ isFavorite?: boolean;
+  onFavoriteToggle?: (propertyId: string) => void;
 }
-
 const currencyFormatter = new Intl.NumberFormat("en-ET", {
   style: "currency",
   currency: "ETB",
@@ -14,7 +20,12 @@ const currencyFormatter = new Intl.NumberFormat("en-ET", {
 export default function PropertyCard({
   property,
   onSelect,
+  isFavorite = false,
+  onFavoriteToggle,
 }: PropertyCardProps) {
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const authLoading = useAuthStore((state) => state.loading);
   const coverPhoto = [...property.photos].sort(
     (first, second) => first.position - second.position,
   )[0];
@@ -27,51 +38,114 @@ export default function PropertyCard({
         .filter(Boolean)
         .join(", ")
     : "Location unavailable";
+
   const propertyType =
-    property.structure?.trim() || property.privacyType?.trim() || "Stay";
+    property.structure?.trim() ||
+    property.privacyType?.trim() ||
+    "Stay";
+
   const city = property.location?.city;
-  const title = city ? `${propertyType} in ${city}` : propertyType;
+  const title = city
+    ? `${propertyType} in ${city}`
+    : propertyType;
+ function handleFavoriteClick(
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (authLoading) return;
+    if (!user) {
+      const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const pathname = window.location.pathname.startsWith(basePath)
+        ? window.location.pathname.slice(basePath.length) || "/"
+        : window.location.pathname;
+      const redirectPath = `${pathname}${window.location.search}${window.location.hash}`;
+      void navigate({
+        to: "/login",
+        search: { redirect: redirectPath },
+      });
+      return;
+    }
+
+    onFavoriteToggle?.(property.id);
+  }
 
   return (
-    <article className="group w-full">
-      <button
-        type="button"
+    <article className="group w-full overflow-hidden">
+    <div className="relative">
+        <Link
+          to="/properties/$propertyId"
+          params={{ propertyId: property.id }}
+          onClick={() => onSelect?.(property.id)}
+          aria-label={`View ${title}, ${location}`}
+          className="block w-full">
+          <AspectRatio
+            ratio={1}
+            className="w-full overflow-hidden rounded-xl bg-muted">
+            {coverPhoto ? (
+              <img
+                src={coverPhoto.url}
+                alt={title}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+                No image available
+              </div>
+            )}
+          </AspectRatio>
+        </Link>
+      <div className="absolute inset-x-3 top-3 z-10 flex items-center justify-between">
+        <Badge
+          variant="secondary"
+          className="h-auto px-2 py-1 text-[12px] font-semibold leading-[16px] pointer-events-none"
+        >
+          Approved
+        </Badge>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleFavoriteClick}
+          disabled={authLoading}
+          aria-label={
+            isFavorite
+              ? "Remove from favorites"
+              : "Add to favorites"
+          }
+          aria-pressed={isFavorite}
+          className="border-0 bg-transparent p-0 hover:bg-transparent"
+        >
+          <Heart
+            strokeWidth={1}
+            className={`size-8 ${isFavorite
+              ? "fill-red-500 text-white"
+              : "fill-[#606163] text-white"
+            }`}
+          />
+        </Button>
+      </div>
+      </div>
+     <Link
+        to="/properties/$propertyId"
+        params={{ propertyId: property.id }}
         onClick={() => onSelect?.(property.id)}
-        disabled={!onSelect}
-        aria-label={`View ${title}, ${location}`}
-        className="block w-full text-left disabled:cursor-default"
+        className="mt-1 flex flex-col gap-0.5"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-muted">
-          {coverPhoto ? (
-            <img
-              src={coverPhoto.url}
-              alt={title}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-              No image available
-            </div>
-          )}
-        </div>
+        <h3 className="truncate text-[14px] leading-[20px] font-semibold text-[#222222]">
+          {title}
+        </h3>
 
-        <div className="space-y-1 pt-3">
-          <h3 className="truncate text-sm font-semibold text-foreground">
-            {title}
-          </h3>
-          <p className="truncate text-sm text-muted-foreground">
-            {location}
-          </p>
-          <p className="pt-1 text-sm text-foreground">
-            <span className="font-semibold">
-              {currencyFormatter.format(property.pricePerNight)}
-            </span>{" "}
-            <span className="text-muted-foreground">night</span>
-          </p>
-        </div>
-      </button>
+        <p className="text-[12px] leading-[16px] font-normal text-[#6c6c6c]">
+          <span className="tracking-tight">
+            {currencyFormatter.format(property.pricePerNight)}
+          </span>{" "}
+          <span className="tracking-normal">
+            per night
+          </span>
+        </p>
+    </Link>
     </article>
   );
 }

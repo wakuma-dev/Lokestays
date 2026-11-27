@@ -9,7 +9,7 @@ export default function PropertyGrid({
   onSelectProperty,
 }: PropertyGridProps) {
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
+    <div className="grid w-full max-w-[1600px] grid-cols-2 gap-x-0 gap-y-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
       {properties.map((property) => (
         <PropertyCard
           key={property.id}

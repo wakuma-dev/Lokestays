@@ -99,7 +99,7 @@ function PropertyCollectionSection({
   };
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-2">
       <div className="flex items-center justify-between">
         <PropertyHeader
           title={collection.title}
@@ -107,7 +107,7 @@ function PropertyCollectionSection({
           neighborhood={collection.neighborhood ?? undefined}
         />
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="hidden lg:flex shrink-0 items-center gap-2">
           <button
             type="button"
             onClick={() => scroll("left")}
@@ -130,12 +130,12 @@ function PropertyCollectionSection({
 
       <div
         ref={scrollContainerRef}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-3 scrollbar-hide"
+        className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-3 scrollbar-hide"
       >
         {collection.properties.map((property) => (
           <div
             key={property.id}
-            className="w-[280px] shrink-0 snap-start sm:w-[300px]"
+            className="w-48 shrink-0 snap-start"
           >
             <PropertyCard
               property={property}

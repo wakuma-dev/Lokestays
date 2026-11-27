@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 interface PropertyHeaderParams {
@@ -18,15 +18,17 @@ export default function PropertyHeader({title, city, neighborhood}: PropertyHead
         });
     }
     return(
-    <div className="w-full flex items-start justify-between">
-        <h1 className="text-[20px] leading-[24px] font-medium tracking-normal text-[#222222]">{title}</h1>
+    <div className="w-full flex items-center justify-between">
+        <div className="w-full flex items-center justify-between md:justify-start gap-2.5">
+        <h1 className="text-[20px] leading-[24px] font-semibold tracking-tight text-[#222222]">{title}</h1>
         <Button 
           type="button"
           variant="outline"
           onClick={handleShowAll}
-          className="size-10 shrink-0 flex items-center justify-center">
-            <ChevronRight size={16} />
+          className="size-8 shrink-0 cursor-pointer rounded-full bg-[#EBEBEB] border-none ring-0 flex items-center justify-center">
+            <ArrowRight className="h-4 w-4" />
           </Button>
+          </div>
     </div>
     );
 }

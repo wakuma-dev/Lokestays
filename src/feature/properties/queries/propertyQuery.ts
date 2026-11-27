@@ -10,9 +10,7 @@ export function usePropertyQuery({propertyId}: UsePropertyQueryParams){
     const normalizedId = propertyId.trim();
     return useQuery({
       queryKey: ["propertyDrafts", "details", normalizedId],
-      queryFn: () => {
-        getPropertyById(propertyId)
-      },
+      queryFn: () => getPropertyById(normalizedId),
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 10,
       refetchOnWindowFocus: false,
