@@ -6,13 +6,12 @@ import NavActions from "./NavActions";
 
 export default function Navbar() {
   const location = useLocation();
-  
-  // DEBUGGING: Log current path and search visibility status to browser console
   const hideSearchPaths = ["/wishlist", "/profile"];
-  const shouldHideSearch = hideSearchPaths.includes(location.pathname);
-  
+  const isPropertyDetailsPage = /^\/properties\/[^/]+$/.test(
+    location.pathname,
+  );
+  const shouldHideSearch = hideSearchPaths.includes(location.pathname) || isPropertyDetailsPage;
   console.log("Current Pathname:", location.pathname, "| Should Hide Search:", shouldHideSearch);
-
   const { handleSubmit } = useSearchSubmit();
 
   return (

@@ -3,11 +3,8 @@ import path from "node:path";
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
-
 export default defineConfig({
- 
-
-  plugins: [
+ plugins: [
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,

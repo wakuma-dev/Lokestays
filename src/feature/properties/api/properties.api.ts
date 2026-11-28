@@ -30,10 +30,21 @@ function parseProperty(
   id: string,
   data: DocumentData,
 ): Properties {
-  return propertiesSchema.parse({
+  const result =  propertiesSchema.safeParse({
     ...data,
     id,
   });
+    if (!result.success) {
+    console.error("PROPERTY VALIDATION FAILED:", {
+      propertyId: id,
+      errors: result.error.issues,
+      firestoreData: data,
+    });
+
+    throw new Error(`Invalid property document: ${id}`);
+  }
+
+  return result.data;
 }
 
 export async function getProperties({

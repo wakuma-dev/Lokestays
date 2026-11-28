@@ -10,7 +10,7 @@ export default function PropertyHeader({title, city, neighborhood}: PropertyHead
     const navigate = useNavigate();
     const handleShowAll = () => {
         navigate({
-            to: "/properties",
+            to: "/properties/properties",
             search: {
                 city,
                 neighborhood

@@ -20,15 +20,13 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
 import { Route as ProtectedProfileRouteImport } from './routes/_protected/profile'
 import { Route as ProtectedWishlistRouteImport } from './routes/_protected/wishlist'
-import { Route as MainPropertiesIndexRouteImport } from './routes/_main/properties/index'
+import { Route as MainPropertiesPropertyIdRouteImport } from './routes/_main/properties/$propertyId'
+import { Route as MainPropertiesPropertiesRouteImport } from './routes/_main/properties/properties'
 
 const AuthRegisterLazyRouteImport = createFileRoute('/_auth/register')()
 const LegalCookieLazyRouteImport = createFileRoute('/_legal/cookie')()
 const LegalPrivacyLazyRouteImport = createFileRoute('/_legal/privacy')()
 const LegalTermsLazyRouteImport = createFileRoute('/_legal/terms')()
-const MainPropertiesPropertyIdLazyRouteImport = createFileRoute(
-  '/_main/properties/$propertyId',
-)()
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -95,19 +93,18 @@ const ProtectedWishlistRoute = ProtectedWishlistRouteImport.update({
   path: '/wishlist',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const MainPropertiesIndexRoute = MainPropertiesIndexRouteImport.update({
-  id: '/properties/',
-  path: '/properties/',
-  getParentRoute: () => MainRoute,
-} as any)
-const MainPropertiesPropertyIdLazyRoute =
-  MainPropertiesPropertyIdLazyRouteImport.update({
+const MainPropertiesPropertyIdRoute =
+  MainPropertiesPropertyIdRouteImport.update({
     id: '/properties/$propertyId',
     path: '/properties/$propertyId',
     getParentRoute: () => MainRoute,
-  } as any).lazy(() =>
-    import('./routes/_main/properties/$propertyId.lazy').then((d) => d.Route),
-  )
+  } as any)
+const MainPropertiesPropertiesRoute =
+  MainPropertiesPropertiesRouteImport.update({
+    id: '/properties/properties',
+    path: '/properties/properties',
+    getParentRoute: () => MainRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
@@ -119,8 +116,8 @@ export interface FileRoutesByFullPath {
   '/cookie': typeof LegalCookieLazyRoute
   '/privacy': typeof LegalPrivacyLazyRoute
   '/terms': typeof LegalTermsLazyRoute
-  '/properties/$propertyId': typeof MainPropertiesPropertyIdLazyRoute
-  '/properties/': typeof MainPropertiesIndexRoute
+  '/properties/$propertyId': typeof MainPropertiesPropertyIdRoute
+  '/properties/properties': typeof MainPropertiesPropertiesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MainIndexRoute
@@ -132,8 +129,8 @@ export interface FileRoutesByTo {
   '/cookie': typeof LegalCookieLazyRoute
   '/privacy': typeof LegalPrivacyLazyRoute
   '/terms': typeof LegalTermsLazyRoute
-  '/properties/$propertyId': typeof MainPropertiesPropertyIdLazyRoute
-  '/properties': typeof MainPropertiesIndexRoute
+  '/properties/$propertyId': typeof MainPropertiesPropertyIdRoute
+  '/properties/properties': typeof MainPropertiesPropertiesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -150,8 +147,8 @@ export interface FileRoutesById {
   '/_legal/privacy': typeof LegalPrivacyLazyRoute
   '/_legal/terms': typeof LegalTermsLazyRoute
   '/_main/': typeof MainIndexRoute
-  '/_main/properties/$propertyId': typeof MainPropertiesPropertyIdLazyRoute
-  '/_main/properties/': typeof MainPropertiesIndexRoute
+  '/_main/properties/$propertyId': typeof MainPropertiesPropertyIdRoute
+  '/_main/properties/properties': typeof MainPropertiesPropertiesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -166,7 +163,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/properties/$propertyId'
-    | '/properties/'
+    | '/properties/properties'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -179,7 +176,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/properties/$propertyId'
-    | '/properties'
+    | '/properties/properties'
   id:
     | '__root__'
     | '/_auth'
@@ -196,7 +193,7 @@ export interface FileRouteTypes {
     | '/_legal/terms'
     | '/_main/'
     | '/_main/properties/$propertyId'
-    | '/_main/properties/'
+    | '/_main/properties/properties'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -300,18 +297,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWishlistRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_main/properties/': {
-      id: '/_main/properties/'
-      path: '/properties'
-      fullPath: '/properties/'
-      preLoaderRoute: typeof MainPropertiesIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
     '/_main/properties/$propertyId': {
       id: '/_main/properties/$propertyId'
       path: '/properties/$propertyId'
       fullPath: '/properties/$propertyId'
-      preLoaderRoute: typeof MainPropertiesPropertyIdLazyRouteImport
+      preLoaderRoute: typeof MainPropertiesPropertyIdRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/properties/properties': {
+      id: '/_main/properties/properties'
+      path: '/properties/properties'
+      fullPath: '/properties/properties'
+      preLoaderRoute: typeof MainPropertiesPropertiesRouteImport
       parentRoute: typeof MainRoute
     }
   }
@@ -345,14 +342,14 @@ const LegalRouteWithChildren = LegalRoute._addFileChildren(LegalRouteChildren)
 
 interface MainRouteChildren {
   MainIndexRoute: typeof MainIndexRoute
-  MainPropertiesPropertyIdLazyRoute: typeof MainPropertiesPropertyIdLazyRoute
-  MainPropertiesIndexRoute: typeof MainPropertiesIndexRoute
+  MainPropertiesPropertyIdRoute: typeof MainPropertiesPropertyIdRoute
+  MainPropertiesPropertiesRoute: typeof MainPropertiesPropertiesRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainIndexRoute: MainIndexRoute,
-  MainPropertiesPropertyIdLazyRoute: MainPropertiesPropertyIdLazyRoute,
-  MainPropertiesIndexRoute: MainPropertiesIndexRoute,
+  MainPropertiesPropertyIdRoute: MainPropertiesPropertyIdRoute,
+  MainPropertiesPropertiesRoute: MainPropertiesPropertiesRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)

@@ -1,14 +1,18 @@
 import { useRef } from "react";
+import type React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+
 import type { Properties } from "../schema/propertiesSchema";
 import PropertyCard from "./PropertyCard";
-import { Button } from "@/components/ui/button";
 import PropertyHeader from "./PropertyHeader";
+import { Button } from "@/components/ui/button";
+
 interface DragState {
   isDragging: boolean;
   startX: number;
   startScrollLeft: number;
 }
+
 interface PropertyCollectionSectionProps {
   title: string;
   city: string;
@@ -16,6 +20,7 @@ interface PropertyCollectionSectionProps {
   properties: Properties[];
   onSelectProperty: (propertyId: string) => void;
 }
+
 export default function PropertyCollectionSection({
   title,
   city,
@@ -24,56 +29,79 @@ export default function PropertyCollectionSection({
   onSelectProperty,
 }: PropertyCollectionSectionProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
+
   const dragStateRef = useRef<DragState>({
-  isDragging: false,
-  startX: 0,
-  startScrollLeft: 0,
-});
+    isDragging: false,
+    startX: 0,
+    startScrollLeft: 0,
+  });
 
-const hasDraggedRef = useRef(false);
+  const hasDraggedRef = useRef(false);
 
-const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-  // Custom dragging is only needed for a mouse.
-  if (event.pointerType !== "mouse" || event.button !== 0) return;
+  // Start tracking mouse movement without capturing the pointer.
+  const handlePointerDown = (
+    event: React.PointerEvent<HTMLDivElement>,
+  ) => {
+    if (event.pointerType !== "mouse" || event.button !== 0) return;
 
-  const carousel = carouselRef.current;
-  if (!carousel) return;
+    const carousel = carouselRef.current;
+    if (!carousel) return;
 
-  dragStateRef.current = {
-    isDragging: true,
-    startX: event.clientX,
-    startScrollLeft: carousel.scrollLeft,
+    dragStateRef.current = {
+      isDragging: true,
+      startX: event.clientX,
+      startScrollLeft: carousel.scrollLeft,
+    };
+
+    hasDraggedRef.current = false;
   };
 
-  hasDraggedRef.current = false;
-  event.currentTarget.setPointerCapture(event.pointerId);
-};
+  // Start dragging only after the pointer moves beyond the threshold.
+  const handlePointerMove = (
+    event: React.PointerEvent<HTMLDivElement>,
+  ) => {
+    const carousel = carouselRef.current;
+    const drag = dragStateRef.current;
 
-const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-  const carousel = carouselRef.current;
-  const drag = dragStateRef.current;
-  if (!carousel || !drag.isDragging) return;
-  const distance = event.clientX - drag.startX;
-  if (Math.abs(distance) > 5) {
-    hasDraggedRef.current = true;
-  }
-  if (hasDraggedRef.current) {
-    carousel.scrollLeft = drag.startScrollLeft - distance;
-  }
-};
+    if (!carousel || !drag.isDragging) return;
 
-const handlePointerUp = () => {
-  dragStateRef.current.isDragging = false;
-};
+    const distance = event.clientX - drag.startX;
 
-const handleClickCapture = (event: React.MouseEvent<HTMLDivElement>) => {
-  if (!hasDraggedRef.current) return;
+    if (Math.abs(distance) > 5 && !hasDraggedRef.current) {
+      hasDraggedRef.current = true;
 
-  event.preventDefault();
-  event.stopPropagation();
-  hasDraggedRef.current = false;
-};
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
 
+    if (hasDraggedRef.current) {
+      carousel.scrollLeft = drag.startScrollLeft - distance;
+    }
+  };
+
+  // Finish the current drag operation.
+  const handlePointerUp = (
+    event: React.PointerEvent<HTMLDivElement>,
+  ) => {
+    dragStateRef.current.isDragging = false;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  // Prevent accidental navigation after dragging.
+  const handleClickCapture = (
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
+    if (!hasDraggedRef.current) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    hasDraggedRef.current = false;
+  };
+
+  // Scroll the carousel using navigation buttons.
   const scrollCarousel = (direction: "left" | "right") => {
     const carousel = carouselRef.current;
 
@@ -92,6 +120,7 @@ const handleClickCapture = (event: React.MouseEvent<HTMLDivElement>) => {
 
   return (
     <section className="space-y-2">
+      {/* Collection heading and navigation controls */}
       <div className="flex items-center justify-between">
         <PropertyHeader
           title={title}
@@ -124,6 +153,7 @@ const handleClickCapture = (event: React.MouseEvent<HTMLDivElement>) => {
         </div>
       </div>
 
+      {/* Property carousel */}
       <div
         ref={carouselRef}
         onPointerDown={handlePointerDown}
@@ -137,10 +167,12 @@ const handleClickCapture = (event: React.MouseEvent<HTMLDivElement>) => {
           {properties.map((property) => (
             <div
               key={property.id}
-              className="  min-w-0 shrink-0 snap-start
-          w-[calc((100%-12px)/2)]
-          sm:w-[calc((100%-36px)/4)]
-          lg:w-[calc((100%-72px)/7)]"
+              className="
+                min-w-0 shrink-0 snap-start
+                w-[calc((100%-12px)/2)]
+                sm:w-[calc((100%-36px)/4)]
+                lg:w-[calc((100%-72px)/7)]
+              "
             >
               <PropertyCard
                 property={property}
