@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-Cx0BB4qO.js";var t=e();function n(){return(0,t.jsx)(`div`,{children:`Hello "/_main/properties/properties"!`})}export{n as component};
