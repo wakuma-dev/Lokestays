@@ -15,7 +15,7 @@ export default function HomePage() {
     data?.pages.flatMap((page) => page.properties) ?? [];
 
   return (
-    <main className="min-h-screen w-full bg-white max-w-[1600px] mx-auto p-4 md:px-8 lg:px-12  text-black pt-20 md:pt-56">
+    <main className="min-h-screen w-full bg-white max-w-[1600px] mx-auto p-4 md:px-8 lg:px-12  text-black pt-14 md:pt-56">
       <Helmet>
         <title>Lokestays | Houses, Apartments & More</title>
         <meta

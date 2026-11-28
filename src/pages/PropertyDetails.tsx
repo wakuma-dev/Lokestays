@@ -1,7 +1,6 @@
 import { useParams } from "@tanstack/react-router";
 import { Helmet } from "react-helmet-async";
 import { usePropertyQuery } from "@/feature/properties";
-
 const currencyFormatter = new Intl.NumberFormat("en-ET", {
   style: "currency",
   currency: "ETB",
